@@ -1,0 +1,33 @@
+.toast-reminder {
+    position: fixed;
+    bottom: 2rem; /* changed from top */
+    left: 2rem;   /* changed from right */
+    background-color: #ff312e;
+    color: #fffffa;
+    padding: 1.5rem 2rem; /* increased padding */
+    border-radius: 16px;  /* slightly rounder */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25); /* deeper shadow */
+    font-weight: bold;
+    font-size: 1.25rem; /* increased font size */
+    z-index: 9999;
+    animation: slideIn 0.5s ease, fadeOut 1s ease 6s forwards;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%); /* changed direction */
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translateX(-100%); /* changed direction */
+    }
+  }
+  
