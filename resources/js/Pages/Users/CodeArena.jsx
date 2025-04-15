@@ -8,19 +8,22 @@ import SubmitButton from '@/Components/CodeArenaComponents/SubmitButton';
 import TerminalModal from '@/Components/CodeArenaComponents/TerminalModal';
 import SurrenderModal from '@/Components/CodeArenaComponents/SurrenderModal';
 import SettingsDropdown from '@/Components/CodeArenaComponents/SettingsDropdown';
+import ToastReminder from '@/Components/CodeArenaComponents/ToastReminder';
 import { FaPython, FaJava } from 'react-icons/fa';
 import { SiC } from 'react-icons/si';
-import '../../app.scss';
+import '../../../scss/Pages/CodeArena.scss';
 
 const CodeArena = () => {
     const [language, setLanguage] = useState('Python');
     const [fontSize, setFontSize] = useState(14);
     const [fontFamily, setFontFamily] = useState('Courier New');
-    const [timeLeft, setTimeLeft] = useState(900); // 15 minutes
+    const [timeLeft, setTimeLeft] = useState(605);
     const [showSettings, setShowSettings] = useState(false);
     const [showTerminalModal, setShowTerminalModal] = useState(false);
     const [terminalOutput, setTerminalOutput] = useState('');
     const [terminalTitle, setTerminalTitle] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isCompiling, setIsCompiling] = useState(false);
     const [showSurrenderModal, setShowSurrenderModal] = useState(false);
     const [isUserEditorLoading, setIsUserEditorLoading] = useState(true);
     const [isOpponentEditorLoading, setIsOpponentEditorLoading] = useState(true);
@@ -76,19 +79,30 @@ const CodeArena = () => {
     }, []);
 
     const handleRunCode = () => {
-        const output = "Executing code...\n\n> python solution.py\n Running test cases: \nTest Case 1: Input: 5 ✓ Passed\nOutput: 25\nExpected: 25\n\nTest Case 2: Input: -7 ✓ Passed\nOutput: 49\nExpected: 49\n\nAll tests completed successfully!";
-        console.log(output);
+        setIsCompiling(true);
         setTerminalTitle('Running Code');
-        setTerminalOutput(output);
         setShowTerminalModal(true);
+    
+        setTimeout(() => {
+            const output = "Executing code...\n\n> python solution.py\n Running test cases: \nTest Case 1: Input: 5 ✓ Passed\nOutput: 25\nExpected: 25\n\nTest Case 2: Input: -7 ✓ Passed\nOutput: 49\nExpected: 49\n\nAll tests completed successfully!";
+            setTerminalOutput(output);
+            setIsCompiling(false);
+        }, 2000); // Simulated delay
     };
+    
 
     const handleSubmitCode = () => {
-        const output = "Validating solution...\n\nRunning all test cases:\nBasic Test Case: ✓ Passed\nNegative Numbers: ✓ Passed\nZero Input: ✓ Passed\nDecimal Numbers: ✓ Passed\n\n✅ All test cases passed!\n\nSubmitting to leaderboard...\nYour solution has been submitted successfully!";
+        setIsSubmitting(true);
         setTerminalTitle('Submitting Solution');
-        setTerminalOutput(output);
         setShowTerminalModal(true);
+
+        setTimeout(() => {
+            const output = "Validating solution...\n\nRunning all test cases:\nBasic Test Case: ✓ Passed\nNegative Numbers: ✓ Passed\nZero Input: ✓ Passed\nDecimal Numbers: ✓ Passed\n\n✅ All test cases passed!\n\nSubmitting to leaderboard...\nYour solution has been submitted successfully!";
+            setTerminalOutput(output);
+            setIsSubmitting(false);
+        }, 2500); // Simulated delay
     };
+
 
     const handleSurrender = () => {
         setShowSurrenderModal(true);
@@ -181,12 +195,12 @@ const CodeArena = () => {
                     </div>
                     <div className="section-container button-containers">
                         <TestCase />
-                        <TerminalButton onClick={handleRunCode} />
-                        <SubmitButton onClick={handleSubmitCode} />
+                        <TerminalButton onClick={handleRunCode} loading={isCompiling} />
+                        <SubmitButton onClick={handleSubmitCode} isLoading={isSubmitting} />
                     </div>
                 </div>
             </div>
-
+            <ToastReminder minutesLeft={Math.floor(timeLeft / 60)} />            
             <SurrenderModal
                 ref={surrenderModalRef}
                 onConfirm={handleConfirmSurrender}
@@ -195,10 +209,11 @@ const CodeArena = () => {
             />
 
             <TerminalModal
-                title={terminalTitle}
+                title="Terminal Output"
                 output={terminalOutput}
-                onClose={() => setShowTerminalModal(false)}
                 showModal={showTerminalModal}
+                loading={isCompiling}
+                onClose={() => setShowTerminalModal(false)}
             />
         </div>
     );

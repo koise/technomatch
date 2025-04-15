@@ -1,100 +1,69 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, useForm, Link } from '@inertiajs/react';
+import AuthHeader from '../../Components/Auth/AuthHeader';
+import InputField from '../../Components/Auth/InputField';
+import PasswordField from '../../Components/Auth/PasswordField';
+import ErrorAlert from '../../Components/Auth/ErrorAlert';
+import RememberForgot from '../../Components/Auth/RememberForgot';
+import AuthDivider from '../../Components/Auth/AuthDivider';
+import SocialLogin from '../../Components/Auth/SocialLogin';
+import SignupPrompt from '../../Components/Auth/SignupPrompt';
+import LoginFeatures from '../../Components/Auth/LoginFeatures';
+import Header from '../../Components/Partials/Header';
+import '../../../scss/Pages/LoginPages.scss';
 
-export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
-        remember: false,
-    });
+export default function Login() {
+  const { data, setData, post, processing, errors } = useForm({ email: '', password: '' });
+  const [rememberMe, setRememberMe] = useState(false);
 
-    const submit = (e) => {
-        e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    post('/login');
+  };
 
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
-    };
+  return (
+    <>
+      <Head title="Login - TechnoMatch" />
+      <Header />
+      <div className="page-wrapper">
+        <div className="login-container">
+          <div className="login-card-wrapper">
+            <div className="login-card">
+              <AuthHeader />
+              <ErrorAlert message={errors.auth} />
 
-    return (
-        <GuestLayout>
-            <Head title="Log in" />
+              <form onSubmit={handleSubmit} className="login-form">
+                <InputField
+                  id="email"
+                  label="Email Address"
+                  type="email"
+                  value={data.email}
+                  onChange={(e) => setData('email', e.target.value)}
+                  placeholder="Enter your email"
+                  error={errors.email}
+                />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+                <PasswordField
+                  value={data.password}
+                  onChange={(e) => setData('password', e.target.value)}
+                  error={errors.password}
+                />
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                <RememberForgot rememberMe={rememberMe} setRememberMe={setRememberMe} />
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
+                <button type="submit" className={`login-button ${processing ? 'loading' : ''}`} disabled={processing}>
+                  {processing ? <><svg className="spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" strokeWidth="4" /></svg><span>Logging in...</span></> : <span>Login</span>}
+                </button>
+              </form>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
+              <AuthDivider />
+              <SocialLogin />
+              <SignupPrompt />
+            </div>
+          </div>
+          <LoginFeatures />
+        </div>
+      </div>
+    </>
+  );
 }

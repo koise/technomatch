@@ -1,0 +1,85 @@
+// Updated Header Styles
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+.technomatch-header {
+    background-color: var(--bg-dark);  /* Keep background dark */
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow-lg);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.5rem 0;
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: 0.3s ease-in-out;
+            font-family: 'Orbitron';
+            .logo-highlight {
+                color: var(--primary-color); /* Red highlight color */
+            }
+
+            &:hover {
+                color: var(--primary-dark); /* Darker red on hover */
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+
+            .nav-link {
+                color: var(--text-light);
+                font-weight: 500;
+                transition: 0.3s;
+                text-decoration: none;
+
+                &:hover {
+                    color: var(--primary-color);
+                    text-decoration: underline;
+                }
+            }
+
+            .nav-button {
+                padding: 0.8rem 1.5rem;
+                border-radius: var(--border-radius);
+                font-size: 14px;
+                text-decoration: none;
+                font-weight: 500;
+                transition: 0.3s;
+                text-transform: uppercase;
+
+                &.outline {
+                    background: transparent;
+                    border: 2px solid var(--primary-color); /* Outline button red */
+                    color: var(--primary-color); /* Red text color */
+
+                    &:hover {
+                        background-color: var(--primary-color);
+                        color: white;
+                    }
+                }
+
+                &:not(.outline) {
+                    background-color: var(--primary-color); /* Red background */
+                    color: white;
+
+                    &:hover {
+                        background-color: var(--primary-dark); /* Darker red on hover */
+                    }
+                }
+            }
+        }
+    }
+}

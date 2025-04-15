@@ -3,7 +3,7 @@
 import React from 'react';
 import MonacoEditor from '@monaco-editor/react';
 
-const OpponentEditor = ({ language, fontSize, fontFamily, code }) => (
+const OpponentEditor = ({ language, code }) => (
     <MonacoEditor
         height="400px"
         language={language}
@@ -11,9 +11,9 @@ const OpponentEditor = ({ language, fontSize, fontFamily, code }) => (
         value={code}
         options={{
             readOnly: true,
-            fontSize: fontSize,
+            fontSize: 12,
             minimap: { enabled: false },
-            fontFamily: fontFamily,
+            fontFamily: 'Courier New',
             automaticLayout: true,
         }}
     />

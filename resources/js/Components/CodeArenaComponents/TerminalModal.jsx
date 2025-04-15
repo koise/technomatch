@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
+import '../../../scss/Components/CodeArena/TerminalModal.scss';
 
-const TerminalModal = ({ title, output, onClose, showModal }) => {
+const TerminalModal = ({ title, output, onClose, showModal, loading }) => {
     const modalRef = useRef(null);
     const contentRef = useRef(null);
 
     useEffect(() => {
-        // Scroll to bottom whenever new output is added
         if (contentRef.current) {
             contentRef.current.scrollTop = contentRef.current.scrollHeight;
         }
 
-        // Close modal on Escape key
         const handleEscapeKey = (e) => {
             if (e.key === 'Escape') {
                 onClose();
@@ -18,10 +17,9 @@ const TerminalModal = ({ title, output, onClose, showModal }) => {
         };
 
         document.addEventListener('keydown', handleEscapeKey);
-        return () => document.removeEventListener('keydown', handleEscapeKey); // Clean up on unmount
+        return () => document.removeEventListener('keydown', handleEscapeKey);
     }, [output, onClose]);
 
-    // Handle click outside to close
     const handleClickOutside = (e) => {
         if (modalRef.current && !modalRef.current.contains(e.target)) {
             onClose();
@@ -29,8 +27,7 @@ const TerminalModal = ({ title, output, onClose, showModal }) => {
     };
 
     const parseOutput = (text) => {
-        if (!text) return null;  // Check if text is undefined or null
-
+        if (!text) return null;
         return text.split('\n').map((line, index) => {
             if (line.includes('✓ Passed') || line.includes('successful') || line.includes('✅')) {
                 return <div key={index} className="terminal-line success">{line}</div>;
@@ -47,10 +44,10 @@ const TerminalModal = ({ title, output, onClose, showModal }) => {
     };
 
     return (
-        <div 
-            className={`terminal-modal-overlay ${showModal ? 'visible' : ''}`} 
-            onClick={handleClickOutside} 
-            style={{ display: showModal ? 'flex' : 'none' }} 
+        <div
+            className={`terminal-modal-overlay ${showModal ? 'visible' : ''}`}
+            onClick={handleClickOutside}
+            style={{ display: showModal ? 'flex' : 'none' }}
         >
             <div className="terminal-modal" ref={modalRef}>
                 <div className="terminal-modal-header">
@@ -63,7 +60,11 @@ const TerminalModal = ({ title, output, onClose, showModal }) => {
                     <button className="close-button" onClick={onClose}>×</button>
                 </div>
                 <div className="terminal-modal-content" ref={contentRef}>
-                    {parseOutput(output)}
+                    {loading ? (
+                        <div className="spinner large-spinner"></div>
+                    ) : (
+                        parseOutput(output)
+                    )}
                 </div>
                 <div className="terminal-modal-footer">
                     <button className="close-terminal-button" onClick={onClose}>Close Terminal</button>

@@ -2,6 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 import { FaPython, FaJava } from 'react-icons/fa';
 import { SiC } from 'react-icons/si';
+import '../../../scss/Components/CodeArena/LanguageDropdown.scss';
 
 const LanguageDropdown = ({ language, setLanguage }) => {
     const languageOptions = [
@@ -9,6 +10,60 @@ const LanguageDropdown = ({ language, setLanguage }) => {
         { value: 'Java', label: <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><FaJava /> Java</div> },
         { value: 'C', label: <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><SiC /> C</div> },
     ];
+
+    // Custom styles for react-select
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            backgroundColor: 'var(--bg-medium)', // Custom background color
+            border: '1px solid var(--bg-dark)', // Border color
+            borderRadius: 'var(--border-radius)', // Border radius
+            padding: '0.5rem 0.8rem',
+            fontSize: '0.9rem',
+            boxShadow: 'var(--shadow-sm)', // Add shadow for depth
+            transition: 'all 0.3s ease', // Smooth transition
+            '&:hover': {
+                borderColor: 'var(--primary-dark)', // Hover border color
+            }
+        }),
+        menu: (provided) => ({
+            ...provided,
+            backgroundColor: 'var(--bg-darker)', // Darker background for the dropdown menu
+            borderRadius: 'var(--border-radius)',
+            boxShadow: 'var(--shadow-md)', // Slightly stronger shadow for the menu
+            marginTop: '0.5rem',
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected ? 'var(--primary-dark)' : 'var(--bg-medium)',
+            color: state.isSelected ? 'var(--text-light)' : 'var(--text-muted)',
+            padding: '0.75rem',
+            fontSize: '0.85rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            '&:hover': {
+                backgroundColor: 'var(--bg-light)', // Hover effect
+                color: 'var(--text-light)',
+                cursor: 'pointer',
+            },
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            color: 'var(--text-light)', // Text color for selected value
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+        }),
+        indicatorSeparator: (provided) => ({
+            ...provided,
+            display: 'none', // Remove the indicator separator
+        }),
+        dropdownIndicator: (provided) => ({
+            ...provided,
+            color: 'var(--text-muted)', // Color for the dropdown arrow indicator
+        }),
+    };
 
     return (
         <div className="language-dropdown-container">
@@ -20,38 +75,7 @@ const LanguageDropdown = ({ language, setLanguage }) => {
                     onChange={(selected) => setLanguage(selected.value)}
                     options={languageOptions}
                     isSearchable={false}
-                    styles={{
-                        control: (provided) => ({
-                            ...provided,
-                            backgroundColor: 'var(--bg-darker)', // Darker background
-                            borderColor: 'var(--bg-dark)', // Dark border for a sleek look
-                            borderRadius: 'var(--border-radius)',
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)', // Darker shadow for depth
-                            color: 'var(--text-light)', // Light text on dark background
-                            padding: '0.8rem',
-                            transition: 'all 0.3s ease-in-out', // Smooth transitions
-                        }),
-                        menu: (provided) => ({
-                            ...provided,
-                            backgroundColor: 'var(--bg-darker)', // Darker background for menu
-                            color: 'var(--text-light)', // Light text for readability
-                            borderRadius: 'var(--border-radius)',
-                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)', // Stronger shadow
-                            marginTop: '0.5rem', // Slight margin to give space
-                        }),
-                        option: (provided, state) => ({
-                            ...provided,
-                            backgroundColor: state.isSelected ? 'var(--primary-dark)' : 'var(--bg-dark)', // Highlight selected option
-                            color: state.isSelected ? 'var(--text-light)' : 'var(--text-muted)', // Change text color based on selection
-                            fontSize: '0.9rem',
-                            padding: '1rem',
-                            '&:hover': {
-                                backgroundColor: 'var(--primary-dark)', // Hover effect
-                                color: 'var(--text-light)', // Hover text color
-                                cursor: 'pointer', // Pointer cursor on hover
-                            },
-                        }),
-                    }}
+                    styles={customStyles} // Applying custom styles to react-select
                 />
             </label>
         </div>

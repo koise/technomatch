@@ -1,5 +1,5 @@
 import React from 'react';
-
+import '../../../scss/Components/CodeArena/SurrenderModal.scss';
 const SurrenderModal = React.forwardRef(({ showModal, onConfirm, onCancel }, ref) => {
     if (!showModal) return null;
 

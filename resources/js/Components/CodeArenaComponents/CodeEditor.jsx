@@ -4,7 +4,6 @@ import MonacoEditor from '@monaco-editor/react';
 const CodeEditor = ({ language, fontSize, fontFamily, code, onChange }) => {
     const [editorCode, setEditorCode] = useState(code);
 
-    // Update the code if the language changes
     useEffect(() => {
         setEditorCode(code);
     }, [language, code]);

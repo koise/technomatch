@@ -3,7 +3,7 @@ import './bootstrap';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
-import 'monaco-editor/min/vs/editor/editor.main.css';
+
 
 
 
