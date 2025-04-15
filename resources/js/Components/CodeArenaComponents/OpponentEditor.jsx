@@ -12,6 +12,7 @@ const OpponentEditor = ({ language, fontSize, fontFamily, code }) => (
         options={{
             readOnly: true,
             fontSize: fontSize,
+            minimap: { enabled: false },
             fontFamily: fontFamily,
             automaticLayout: true,
         }}

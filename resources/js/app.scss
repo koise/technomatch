@@ -1,9 +1,36 @@
 
-@import '../scss/CodeArena.scss';
-@import '../scss/testCasesPanel';
-@import '../scss/TerminalModal.scss';
-@import '../scss/ToastReminder.scss';
-@import '../scss/SurrenderModal.scss';
-body{
-    background-color: black;
+@import '../scss/CodeArena/CodeArena.scss';
+@import '../scss/CodeArena/testCasesPanel';
+@import '../scss/CodeArena/TerminalModal.scss';
+@import '../scss/CodeArena/ToastReminder.scss';
+@import '../scss/CodeArena/SurrenderModal.scss';
+@import '../scss/CodeArena/LanguageDropdown.scss';
+
+.editor-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 800px;
+    border: 1px dashed #ccc;
+    border-radius: 12px;
+    background-color: var(--bg-darker);
+    color: #515052;
+    font-size: 1rem;
+    font-style: italic;
+    gap: 10px;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #ff312e;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

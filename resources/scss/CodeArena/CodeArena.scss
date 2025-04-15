@@ -81,7 +81,7 @@ body {
           }
 
           .subtitle {
-            font-size: 0.85rem;
+            font-size: 20px;
             color: var(--text-muted);
           }
         }
@@ -305,6 +305,8 @@ body {
           }
         }
 
+
+
         &.instructions-container {
           .instruction-card {
             background-color: var(--bg-medium);
@@ -396,6 +398,7 @@ body {
                   color: var(--text-muted);
                 }
               }
+              
 
               .test-details {
                 display: flex;
@@ -419,7 +422,9 @@ body {
           }
         }
 
-        &.opponent-container {
+        &.opponents-editor {
+          pointer-events: none;
+          cursor: not-allowed; 
           .opponent-editor {
             pointer-events: none;
             cursor: not-allowed; 
@@ -518,4 +523,11 @@ body {
     &:hover {
         background-color: var(--primary-dark);
     }
+}
+
+.button-containers {
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;;
 }

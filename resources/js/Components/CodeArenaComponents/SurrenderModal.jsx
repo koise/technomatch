@@ -1,21 +1,20 @@
-// src/Components/SurrenderModal.js
-
 import React from 'react';
 
+const SurrenderModal = React.forwardRef(({ showModal, onConfirm, onCancel }, ref) => {
+    if (!showModal) return null;
 
-const SurrenderModal = ({ onClose, onConfirm }) => {
     return (
-        <div className="surrender-modal-overlay">
-            <div className="surrender-modal">
-                <h2>Game Over</h2>
-                <p>You have surrendered. Your score will not be recorded.</p>
-                <div className="modal-buttons">
-                    <button className="close-btn" onClick={onClose}>Close</button>
-                    <button className="confirm-btn" onClick={onConfirm}>Confirm</button>
+        <div className="surrender-modal">
+            <div className="modal-content" ref={ref}>
+                <h2>Confirm Surrender</h2>
+                <p>Are you sure you want to surrender? Your score will not be recorded.</p>
+                <div className="modal-actions">
+                    <button onClick={onConfirm}>Yes, Surrender</button>
+                    <button onClick={onCancel}>Cancel</button>
                 </div>
             </div>
         </div>
     );
-};
+});
 
 export default SurrenderModal;
