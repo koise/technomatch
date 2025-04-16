@@ -13,7 +13,7 @@ const FeatureCard = ({ title, description, youtubeLink, index }) => (
     viewport={{ once: true, amount: 0.2 }}
     transition={{ duration: 0.7, ease: "easeOut" }}
   >
-    <div className="feature-description">
+    <div className="feature-description" id = "#faetures">
       <h2>{title}</h2>
       {description}
     </div>
