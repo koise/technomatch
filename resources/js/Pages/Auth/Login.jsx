@@ -18,9 +18,7 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    post('/login');
-  };
+    e.preventDefault(); post('/login'); };
 
   return (
     <ThemeProvider>
