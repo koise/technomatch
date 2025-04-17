@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from '@inertiajs/react';
+import { ThemeProvider } from '../context/ThemeContext';
 import Header from '@/Components/Partials/Header'; 
 import '../../scss/Home.scss';
 
@@ -86,93 +87,95 @@ const Home = () => {
   ];
 
   return (
-    <div className="home">
-      <Header />
-      
-      {/* Enhanced Hero Section with Animation */}
-      <section className="hero">
-        <div className="hero-content">
-          <motion.h1
+    <ThemeProvider>
+      <div className="home">
+        <Header />
+        
+        {/* Enhanced Hero Section with Animation */}
+        <section className="hero">
+          <div className="hero-content">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              Train like a Warrior.
+            </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            >
+              Compete like a <span>Champion.</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.8 }}
+            >
+              Improve your skills, climb the ranks, and challenge the best!
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 1.1 }}
+            >
+              <Link href="/login" className="hero-cta">
+                Start Playing!
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section id="explore" className="features">
+          <motion.h2 
+            className="features-header"
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            Unleash your coding potential with our <br /> game modes and <span>challenges!</span>
+          </motion.h2>
+          <div className="features-content">
+            {features.map((feature, index) => (
+              <FeatureCard key={index} {...feature} index={index} />
+            ))}
+          </div>
+        </section>
+
+        {/* Enhanced Leaderboard Section */}
+        <section id="leaderboard" className="leaderboard">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            Track Your Progress in <span>Real Time!</span>
+          </motion.h2>
+          <motion.div 
+            className="leaderboard-content"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Train like a Warrior.
-          </motion.h1>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            Compete like a <span>Champion.</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
-          >
-            Improve your skills, climb the ranks, and challenge the best!
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-          >
-            <Link to="/login" className="hero-cta">
-              Start Playing!
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="explore" className="features">
-        <motion.h2 
-          className="features-header"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          Unleash your coding potential with our <br /> game modes and <span>challenges!</span>
-        </motion.h2>
-        <div className="features-content">
-          {features.map((feature, index) => (
-            <FeatureCard key={index} {...feature} index={index} />
-          ))}
-        </div>
-      </section>
-
-      {/* Enhanced Leaderboard Section */}
-      <section id="leaderboard" className="leaderboard">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          Track Your Progress in <span>Real Time!</span>
-        </motion.h2>
-        <motion.div 
-          className="leaderboard-content"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <div className="leaderboard-placeholder">
-            <div className="coming-soon">COMING SOON</div>
-            <div className="leaderboard-mock">
-              <div className="rank-item"></div>
-              <div className="rank-item"></div>
-              <div className="rank-item"></div>
-              <div className="rank-item"></div>
-              <div className="rank-item"></div>
+            <div className="leaderboard-placeholder">
+              <div className="coming-soon">COMING SOON</div>
+              <div className="leaderboard-mock">
+                <div className="rank-item"></div>
+                <div className="rank-item"></div>
+                <div className="rank-item"></div>
+                <div className="rank-item"></div>
+                <div className="rank-item"></div>
+              </div>
             </div>
-          </div>
-        </motion.div>
-      </section>
-    </div>
+          </motion.div>
+        </section>
+      </div>
+    </ThemeProvider>
   );
 };
 

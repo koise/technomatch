@@ -1,24 +1,20 @@
-@import '../scss/variables.scss';
+@import '_variables.scss';
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
-
   background-color: var(--bg-darker);
   margin: 0;
-  font-family: '   font-family: 'Orbitron';', system-ui, -apple-system, sans-serif;
-}
-
-html{
-  scroll-behavior: smooth;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-light);
 }
 
 .home {
   margin: 0 auto;
   overflow-x: hidden;
-
-  // Enhanced Hero Section
+  
+  // Hero section - updated for dark mode compatibility
   .hero {
-    height: 85vh; // Shorter, more standard hero height
+    height: 85vh;
     min-height: 650px;
     max-height: 850px;
     background-image: url("../js/assets/images/trophy.svg");
@@ -49,6 +45,7 @@ html{
       z-index: 2;
 
       h1 {
+        font-family: 'Orbitron', sans-serif;
         font-weight: 800;
         letter-spacing: -2px;
         color: var(--text-light);
@@ -59,7 +56,7 @@ html{
 
         @media (max-width: 768px) {
           font-size: 3.5rem;
-          letter-spacing: -2px;
+          letter-spacing: -1px;
         }
 
         span {
@@ -105,7 +102,7 @@ html{
         color: var(--text-light);
         text-decoration: none;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-lg);
         position: relative;
         overflow: hidden;
         
@@ -122,7 +119,7 @@ html{
         
         &:hover {
           transform: translateY(-3px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+          box-shadow: var(--shadow-xl);
           
           &::before {
             left: 100%;
@@ -136,7 +133,7 @@ html{
     }
   }
 
-  // Enhanced Features Section
+  // Features Section - updated for dark mode
   .features {
     padding: 120px 8%;
     background: linear-gradient(to bottom, var(--bg-darker), var(--bg-dark), var(--bg-darker));
@@ -147,6 +144,7 @@ html{
       color: var(--text-muted);
       text-align: center;
       line-height: 1.2;
+      font-family: 'Orbitron', sans-serif;
 
       @media (max-width: 768px) {
         font-size: 2.2rem;
@@ -180,6 +178,7 @@ html{
         margin-bottom: 80px;
         border-radius: var(--border-radius);
         position: relative;
+        transition: transform 0.3s ease;
 
         // Added subtle divider
         &:not(:last-child)::after {
@@ -203,6 +202,7 @@ html{
             color: var(--primary-color);
             position: relative;
             display: inline-block;
+            font-family: 'Orbitron', sans-serif;
             
             &::before {
               content: '';
@@ -253,14 +253,14 @@ html{
         &-tutorial {
           width: 40%;
           height: 350px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          box-shadow: var(--shadow-lg);
           border-radius: var(--border-radius);
           overflow: hidden;
           transition: transform 0.3s ease, box-shadow 0.3s ease;
           
           &:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            box-shadow: var(--shadow-xl);
           }
 
           iframe {
@@ -277,12 +277,13 @@ html{
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, rgba(20, 20, 30, 0.8), rgba(10, 10, 15, 0.9));
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
             color: var(--text-light);
             font-size: 1.5rem;
             text-align: center;
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--feature-border);
             
             // Add code-like background pattern
             &::before {
@@ -292,6 +293,7 @@ html{
               opacity: 0.05;
               font-family: monospace;
               transform: rotate(-20deg);
+              color: var(--primary-color);
             }
             
             p {
@@ -325,7 +327,7 @@ html{
     }
   }
 
-  // Enhanced Leaderboard Section
+  // Leaderboard Section - updated for dark mode
   .leaderboard {
     padding: 100px 5%;
     position: relative;
@@ -345,9 +347,10 @@ html{
       font-size: 3rem;
       text-align: center;
       margin-bottom: 70px;
-      color: #fff;
+      color: var(--text-light);
       position: relative;
       z-index: 1;
+      font-family: 'Orbitron', sans-serif;
       
       @media (max-width: 768px) {
         font-size: 2.2rem;
@@ -387,7 +390,7 @@ html{
       font-size: 2rem;
       position: relative;
       z-index: 1;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
       
       &::before {
@@ -405,10 +408,11 @@ html{
       .leaderboard-placeholder {
         width: 80%;
         max-width: 800px;
-        background: rgba(0,0,0,0.5);
+        background: var(--leaderboard-bg);
         border-radius: 10px;
         padding: 30px;
-        border: 1px solid rgba(var(--primary-color-rgb), 0.3);
+        border: 1px solid var(--leaderboard-border);
+        backdrop-filter: blur(5px); // For modern browsers
         
         .coming-soon {
           text-align: center;
@@ -416,6 +420,7 @@ html{
           letter-spacing: 3px;
           color: var(--primary-color);
           margin-bottom: 20px;
+          font-family: 'Orbitron', sans-serif;
         }
         
         .leaderboard-mock {
@@ -425,7 +430,7 @@ html{
           
           .rank-item {
             height: 60px;
-            background: rgba(255,255,255,0.05);
+            background: var(--leaderboard-item);
             border-radius: 8px;
             opacity: 0.7;
             

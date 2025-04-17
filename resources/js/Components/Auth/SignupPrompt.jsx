@@ -1,10 +1,15 @@
+import React from 'react';
 import { Link } from '@inertiajs/react';
 
-export default function SignupPrompt() {
+const SignupPrompt = () => {
   return (
     <div className="signup-prompt">
-      <span>Don't have an account?</span>
-      <Link href="/register" className="signup-link">Create Account</Link>
+      Don't have an account?
+      <Link href="/signup" className="signup-link">
+        Sign up
+      </Link>
     </div>
   );
-}
+};
+
+export default SignupPrompt;

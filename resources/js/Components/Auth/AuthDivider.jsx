@@ -1,4 +1,11 @@
-export default function AuthDivider() {
-    return <div className="auth-divider"><span>OR</span></div>;
-  }
-  
+import React from 'react';
+
+const AuthDivider = () => {
+  return (
+    <div className="auth-divider">
+      <span>or continue with</span>
+    </div>
+  );
+};
+
+export default AuthDivider;

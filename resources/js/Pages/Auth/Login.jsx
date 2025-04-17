@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm, Link } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import AuthHeader from '../../Components/Auth/AuthHeader';
 import InputField from '../../Components/Auth/InputField';
 import PasswordField from '../../Components/Auth/PasswordField';
@@ -9,7 +9,8 @@ import AuthDivider from '../../Components/Auth/AuthDivider';
 import SocialLogin from '../../Components/Auth/SocialLogin';
 import SignupPrompt from '../../Components/Auth/SignupPrompt';
 import LoginFeatures from '../../Components/Auth/LoginFeatures';
-import Header from '../../Components/Partials/Header';
+import { ThemeProvider } from '../../context/ThemeContext';
+import Header from '@/Components/Partials/LoginHeader';   
 import '../../../scss/Pages/LoginPages.scss';
 
 export default function Login() {
@@ -22,7 +23,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <ThemeProvider>
       <Head title="Login - TechnoMatch" />
       <Header />
       <div className="page-wrapper">
@@ -30,7 +31,7 @@ export default function Login() {
           <div className="login-card-wrapper">
             <div className="login-card">
               <AuthHeader />
-              <ErrorAlert message={errors.auth} />
+              {errors.auth && <ErrorAlert message={errors.auth} />}
 
               <form onSubmit={handleSubmit} className="login-form">
                 <InputField
@@ -52,7 +53,16 @@ export default function Login() {
                 <RememberForgot rememberMe={rememberMe} setRememberMe={setRememberMe} />
 
                 <button type="submit" className={`login-button ${processing ? 'loading' : ''}`} disabled={processing}>
-                  {processing ? <><svg className="spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" strokeWidth="4" /></svg><span>Logging in...</span></> : <span>Login</span>}
+                  {processing ? (
+                    <>
+                      <svg className="spinner" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" fill="none" strokeWidth="4" />
+                      </svg>
+                      <span>Logging in...</span>
+                    </>
+                  ) : (
+                    <span>Login</span>
+                  )}
                 </button>
               </form>
 
@@ -64,6 +74,6 @@ export default function Login() {
           <LoginFeatures />
         </div>
       </div>
-    </>
+    </ThemeProvider>
   );
 }

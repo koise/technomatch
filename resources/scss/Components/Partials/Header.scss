@@ -1,122 +1,122 @@
-// Define light and dark theme variables scoped to header
-:root {
-    --header-bg: #fffffa;
-    --header-text: #000103;
-    --primary-color: #ff4d4f;     
-    --primary-dark: #d9363e;      
-    --primary-outline: #ffa39e;   
-    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --border-radius: 8px;
-  }
-  
-  .dark {
-    --header-bg: #000103;
-    --header-text: #fffffa;
-    --primary-color: #ff312e;
-    --primary-dark: #ff1a17;
-    --primary-outline: #ff7875;
-    --shadow-lg: 0 4px 12px rgba(255, 255, 255, 0.1);
-  }
-  
-  
-  .technomatch-header {
-    background-color: var(--header-bg);
-    padding: 1rem 2rem;
-    width: 100%;
-    box-shadow: var(--shadow-lg);
-    position: fixed;
-    top: 0;
-    z-index: 999;
-    transition: background-color 0.3s ease;
-  
-    .header-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0.5rem 0;
-  
-      .logo {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--header-text);
-        text-decoration: none;
-        text-transform: uppercase;
-        font-family: 'Orbitron';
-        transition: color 0.3s ease;
-  
-        .logo-highlight {
-          color: var(--primary-color);
-        }
-  
-        &:hover {
-          color: var(--primary-dark);
-        }
-      }
-  
-      .nav-links {
+  // Define light and dark theme variables scoped to header
+  :root {
+      --header-bg: #fffffa;
+      --header-text: #000103;
+      --primary-color: #ff4d4f;     
+      --primary-dark: #d9363e;      
+      --primary-outline: #ffa39e;   
+      --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+    }
+    
+    .dark {
+      --header-bg: #000103;
+      --header-text: #fffffa;
+      --primary-color: #ff312e;
+      --primary-dark: #ff1a17;
+      --primary-outline: #ff7875;
+      --shadow-lg: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+    
+    
+    .technomatch-header {
+      background-color: var(--header-bg);
+      padding: 1rem 2rem;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      position: fixed;
+      top: 0;
+      z-index: 999;
+      transition: background-color 0.3s ease;
+    
+      .header-container {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 1.5rem;
-  
-        .nav-link {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.5rem 0;
+    
+        .logo {
+          font-size: 1.5rem;
+          font-weight: 700;
           color: var(--header-text);
-          font-weight: 500;
-          transition: 0.3s;
           text-decoration: none;
-  
-          &:hover {
+          text-transform: uppercase;
+          font-family: 'Orbitron';
+          transition: color 0.3s ease;
+    
+          .logo-highlight {
             color: var(--primary-color);
-            text-decoration: underline;
+          }
+    
+          &:hover {
+            color: var(--primary-dark);
           }
         }
-  
-        .theme-toggle {
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          color: var(--header-text);
-          margin: 0 0.5rem;
+    
+        .nav-links {
           display: flex;
           align-items: center;
-          transition: color 0.3s ease;
-  
-          &:hover {
-            color: var(--primary-color);
-          }
-        }
-  
-        .nav-button {
-          padding: 0.6rem 1.2rem;
-          border-radius: var(--border-radius);
-          font-size: 14px;
-          text-decoration: none;
-          font-weight: 500;
-          transition: 0.3s;
-          text-transform: uppercase;
-  
-          &.outline {
-            background: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-  
+          gap: 1.5rem;
+    
+          .nav-link {
+            color: var(--header-text);
+            font-weight: 500;
+            transition: 0.3s;
+            text-decoration: none;
+    
             &:hover {
-              background-color: var(--primary-color);
-              color: white;
+              color: var(--primary-color);
+              text-decoration: underline;
             }
           }
-  
-          &:not(.outline) {
-            background-color: var(--primary-color);
-            color: white;
-  
+    
+          .theme-toggle {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--header-text);
+            margin: 0 0.5rem;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+    
             &:hover {
-              background-color: var(--primary-dark);
+              color: var(--primary-color);
+            }
+          }
+    
+          .nav-button {
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            text-transform: uppercase;
+    
+            &.outline {
+              background: transparent;
+              border: 2px solid var(--primary-color);
+              color: var(--primary-color);
+    
+              &:hover {
+                background-color: var(--primary-color);
+                color: white;
+              }
+            }
+    
+            &:not(.outline) {
+              background-color: var(--primary-color);
+              color: white;
+    
+              &:hover {
+                background-color: var(--primary-dark);
+              }
             }
           }
         }
       }
     }
-  }
-  
+    

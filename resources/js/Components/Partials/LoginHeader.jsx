@@ -16,8 +16,6 @@ const Header = () => {
         </Link>
         <nav className="nav-links">
           <a href="/" className="nav-link">Home</a>
-          <a href="#explore" className="nav-link">Features</a>
-          <a href="#leaderboard" className="nav-link">Leaderboard</a>
           <Link href="/login" className="nav-button">Login</Link>
           <Link href="/signup" className="nav-button outline">Sign Up</Link>
           <button 

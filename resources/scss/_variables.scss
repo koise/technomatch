@@ -1,0 +1,133 @@
+// Base theme variables
+:root {
+  // Base colors
+  --bg-darker: #f2f2f7;
+  --bg-dark: #fafafa;
+  --bg-light: #ffffff;
+  --text-light: #111827;
+  --text-muted: #4b5563;
+  
+  // Header specific
+  --header-bg: #ffffff;
+  --header-text: #000103;
+  
+  // Primary color and variants
+  --primary-color: #ff4d4f;     
+  --primary-color-rgb: 255, 77, 79;
+  --primary-dark: #d9363e;      
+  --primary-outline: #ffa39e;
+  
+  // UI elements
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  --border-radius: 8px;
+  
+  // Feature card
+  --feature-bg: rgba(255, 255, 255, 0.05);
+  --feature-border: rgba(255, 255, 255, 0.1);
+  
+  // Leaderboard
+  --leaderboard-bg: rgba(255, 255, 255, 0.03);
+  --leaderboard-border: rgba(255, 255, 255, 0.1);
+  --leaderboard-item: rgba(255, 255, 255, 0.05);
+
+  --border-radius-sm: 6px;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  
+}
+
+// Dark theme variables
+.dark {
+  // Base colors
+  --bg-darker: #0f172a;
+  --bg-dark: #1e293b;
+  --bg-light: #334155;
+  --text-light: #f3f4f6;
+  --text-muted: #d1d5db;
+  
+  // Header specific
+  --header-bg: #111827;
+  --header-text: #f9fafb;
+  
+  // Primary color and variants (slightly brighter for dark mode)
+  --primary-color: #ff312e;
+  --primary-color-rgb: 255, 49, 46;
+  --primary-dark: #ff1a17;
+  --primary-outline: #ff7875;
+  
+  // UI elements
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+  
+  // Feature card
+  --feature-bg: rgba(0, 0, 0, 0.2);
+  --feature-border: rgba(255, 255, 255, 0.05);
+  
+  // Leaderboard
+  --leaderboard-bg: rgba(0, 0, 0, 0.3);
+  --leaderboard-border: rgba(255, 255, 255, 0.05);
+  --leaderboard-item: rgba(255, 255, 255, 0.03);
+}
+
+// Media query for system preference - this will be used if localStorage is not set
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    // Base colors
+    --bg-darker: #0f172a;
+    --bg-dark: #1e293b;
+    --bg-light: #334155;
+    --text-light: #f3f4f6;
+    --text-muted: #d1d5db;
+    
+    // Header specific  
+    --header-bg: #111827;
+    --header-text: #f9fafb;
+    
+    // Primary color and variants
+    --primary-color: #ff312e;
+    --primary-color-rgb: 255, 49, 46;
+    --primary-dark: #ff1a17;
+    --primary-outline: #ff7875;
+    
+    // UI elements
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+    
+    // Feature card
+    --feature-bg: rgba(0, 0, 0, 0.2);
+    --feature-border: rgba(255, 255, 255, 0.05);
+    
+    // Leaderboard
+    --leaderboard-bg: rgba(0, 0, 0, 0.3);
+    --leaderboard-border: rgba(255, 255, 255, 0.05);
+    --leaderboard-item: rgba(255, 255, 255, 0.03);
+  }
+}
+
+// Global transition classes
+html {
+  scroll-behavior: smooth;
+}
+
+body,
+button,
+a,
+input,
+div,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
