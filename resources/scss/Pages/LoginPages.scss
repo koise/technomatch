@@ -209,6 +209,7 @@ body {
   .login-card-wrapper {
     width: 50%;
     display: flex;
+    background-color: var(--header-bg);
     align-items: center;
     justify-content: center;
     padding: 2rem;
@@ -283,14 +284,14 @@ body {
               transform: translateY(-50%);
               width: 18px;
               height: 18px;
-              color: var(--text-muted);
+              color: var(--primary-dark);
             }
           
             input {
               width: 100%;
               padding: 0.875rem 1rem 0.875rem 2.75rem;
               background-color: var(--bg-light);
-              border: 1px solid var(--leaderboard-border);
+              border: 1px solid var(--header-text);
               border-radius: var(--border-radius);
               color: var(--text-light);
               font-size: 0.9375rem;
@@ -302,7 +303,7 @@ body {
           
               &:focus {
                 outline: none;
-                border-color: var(--primary-color);
+                border-color: var(--text-light);
                 box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.3);
               }
             }
@@ -314,7 +315,7 @@ body {
               transform: translateY(-50%);
               background: none;
               border: none;
-              color: var(--text-muted);
+              color: var(--primary-dark);
               cursor: pointer;
               display: flex;
               padding: 0.25rem;
@@ -325,7 +326,7 @@ body {
               }
           
               &:hover {
-                color: var(--text-light);
+                color: var(--primary-outline);
               }
             }
           }
@@ -355,7 +356,7 @@ body {
               height: 16px;
               border: 1px solid var(--leaderboard-border);
               border-radius: 4px;
-              background-color: var(--bg-light);
+              background-color: var(--primary-light-color);
               cursor: pointer;
               position: relative;
         
@@ -473,16 +474,13 @@ body {
           left: 0;
           right: 0;
           height: 1px;
-          background-color: var(--border-color);
         }
         
         span {
           position: relative;
-          background-color: var(--bg-card);
           padding: 0 1rem;
           color: var(--text-secondary);
           font-size: 0.8125rem;
-          background: var(--bg-card);
           z-index: 1;
         }
       }
@@ -554,15 +552,16 @@ body {
   }
   
   .login-graphics {
-    width: 50%;
-    background: linear-gradient(135deg, rgba(255, 49, 46, 0.9), rgba(255, 102, 89, 0.9)), 
+    height: 100%;
+    background: linear-gradient(135deg, rgba(199, 139, 139, 0.9), rgba(248, 23, 2, 0.9)), 
                             url("../js/src/assets/images/section_twooo.svg") center/cover;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 3rem;
+    padding: 2rem;
     position: relative;
     overflow: hidden;
+    color: white;
     
     &::before {
       content: '';

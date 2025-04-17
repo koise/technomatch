@@ -12,6 +12,7 @@ Route::get('/competitive-editor', function () { return Inertia::render('Users/Co
 Route::get('/code-arena', function () {return Inertia::render('Users/CodeArena');});
 Route::get('/users/editor', function () { return Inertia::render('Users/');});
 Route::get('/login', function () { return Inertia::render('Auth/Login');});
-Route::get('/register', function () { return Inertia::render('Auth/Register');});
+Route::get('/signup', function () { return Inertia::render('Auth/Signup');});
+
 
 require __DIR__.'/auth.php';
