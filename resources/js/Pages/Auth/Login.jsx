@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import AuthHeader from '../../Components/Auth/Login/AuthHeader';
 import InputField from '../../Components/Auth/Login/InputField';
@@ -12,17 +12,67 @@ import SignupPrompt from '../../Components/Auth/Login/SignupPrompt';
 import LoginFeatures from '../../Components/Auth/Login/LoginFeatures';
 import { ThemeProvider } from '../../context/ThemeContext';
 import Header from '@/Components/Partials/LoginHeader';   
+import { Inertia } from '@inertiajs/inertia';
+import axios from 'axios';
 import '../../../scss/Pages/LoginPages.scss';
 
 export default function Login() {
-  const { data, setData, post, processing, errors } = useForm({ email: '', password: '' });
+  const [data, setData] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [processing, setProcessing] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    post('/login');
+    setProcessing(true);
+  
+    if (!data.email || !data.password) {
+      setErrors({ auth: 'Email and password are required' });
+      setProcessing(false);
+      return;
+    }
+  
+    try {
+      // Make the login request
+      const response = await axios.post('/login', {
+        login: data.email,
+        password: data.password,
+        remember_me: rememberMe,
+      });
+  
+      if (response.status === 200) {
+        Inertia.visit('/code-arena');
+      }
+    } catch (error) {
+      // Log the entire error object to inspect it
+      console.log('Login Error:', error);
+  
+      if (error.response) {
+        // If the response is present, log the response data
+        console.log('Error Response:', error.response.data);
+  
+        const { message, errors } = error.response.data;
+  
+        if (message) {
+          setErrors({ auth: message });
+        } else if (errors) {
+          if (errors.login) {
+            setErrors({ login: errors.login });
+          }
+          if (errors.password) {
+            setErrors({ password: errors.password });
+          }
+        }
+      } else {
+        // Log a fallback error message
+        console.log('Error without response:', error.message);
+        setErrors({ auth: 'An error occurred. Please try again.' });
+      }
+    } finally {
+      setProcessing(false);
+    }
   };
-
+  
   return (
     <ThemeProvider>
       <Head title="Login - TechnoMatch" />
@@ -62,11 +112,11 @@ export default function Login() {
                 >
                   <InputField
                     id="email"
-                    label="Email Address"
-                    type="email"
+                    label="Email Address or Username"
+                    type="text"
                     value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
-                    placeholder="Enter your email"
+                    onChange={(e) => setData({ ...data, email: e.target.value })}
+                    placeholder="Enter your email or username"
                     error={errors.email}
                   />
                 </motion.div>
@@ -78,7 +128,7 @@ export default function Login() {
                 >
                   <PasswordField
                     value={data.password}
-                    onChange={(e) => setData('password', e.target.value)}
+                    onChange={(e) => setData({ ...data, password: e.target.value })}
                     error={errors.password}
                   />
                 </motion.div>

@@ -1,0 +1,63 @@
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+  
+  // Components/Auth/Signup/PhaseOne.module.scss
+  @import '../../../../scss/_mixins';
+  
+  .form {
+    @include form-base;
+    
+    input, select {
+      @include input-base;
+    }
+    
+    button {
+      @include button-base;
+      margin-top: 1rem;
+    }
+    
+    .field-group {
+      display: flex;
+      gap: 1rem;
+      
+      @media (max-width: 640px) {
+        flex-direction: column;
+      }
+      
+      input {
+        flex: 1;
+      }
+    }
+    
+    .error-message {
+      color: var(--primary-color);
+      font-size: 0.75rem;
+      margin-top: -0.75rem;
+    }
+  }
+  

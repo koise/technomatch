@@ -1,87 +1,919 @@
-.signup-container {
-    background-color: var(--bg-darker);
-    color: var(--text-light);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
+// Import variables first
+@import '../variables';
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+// ==========================================
+// Core Variables and Theme Configuration
+// ==========================================
+:root {
+  // Animation and transition variables
+  --transition-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
   
-    .signup-header {
-      background-color: var(--header-bg);
-      color: var(--header-text);
-      font-size: 1.5rem;
-      font-weight: 600;
-      padding: 1rem 2rem;
-      width: 100%;
-      box-shadow: var(--shadow-sm);
-      text-align: center;
+  // Form element dimensions
+  --form-element-height: 3.25rem;
+  --form-max-width: 32rem;
+  
+  // Define focus state styles
+  --focus-ring-color: rgba(var(--primary-color-rgb), 0.25);
+  --focus-ring-width: 3px;
+  
+  // Z-index layering system
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 100;
+  --z-modal: 1000;
+  --z-toast: 2000;
+}
+
+// Base styles for the document
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  margin-top: 5%;
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--duration-normal) ease,
+              color var(--duration-normal) ease;
+}
+
+// ==========================================
+// Mixins - Reusable style blocks
+// ==========================================
+@mixin form-base {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  max-width: var(--form-max-width);
+  margin: 0 auto;
+}
+
+@mixin input-base {
+  width: 100%;
+  height: var(--form-element-height);
+  padding: .3rem 1em;
+  border-radius: var(--border-radius);
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: 2px solid var(--input-border);
+  transition: all var(--duration-normal) var(--transition-ease-out);
+  font-size: var(--text-base);
+  font-weight: 700;
+  
+  // Focus state enhancements
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+  }
+
+  &::placeholder {
+    color: var(--input-placeholder);
+    opacity: 0.7;
+  }
+  
+  // Validation states
+  &.error {
+    border-color: var(--error-color);
+    background-color: rgba(var(--error-color-rgb), 0.03);
+    
+    &:focus {
+      box-shadow: 0 0 0 var(--focus-ring-width) rgba(var(--error-color-rgb), 0.15);
     }
+  }
   
-    .phase-card {
+  &.success {
+    border-color: var(--success-color);
+    background-color: rgba(var(--success-color-rgb), 0.03);
+    
+    &:focus {
+      box-shadow: 0 0 0 var(--focus-ring-width) rgba(var(--success-color-rgb), 0.15);
+    }
+  }
+  
+  // Browser autofill customization
+  &:-webkit-autofill {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: var(--input-text) !important;
+    box-shadow: 0 0 0px 1000px var(--input-bg) inset;
+  }
+}
+
+@mixin button-base {
+  width: 100%;
+  height: var(--form-element-height);
+  padding: 0.875rem 1rem;
+  border-radius: var(--border-radius);
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--transition-ease-out);
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  
+  // Enhanced hover state
+  &:hover:not(:disabled) {
+    background-color: var(--button-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  // Enhanced active state
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  // Focus state - Accessible and visually appealing
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+  }
+  
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background-color: var(--text-muted);
+  }
+  
+  // Ripple effect for tactile feedback
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    animation: ripple 0.6s linear;
+    transform: scale(0);
+  }
+  
+  // Button with icon alignments
+  svg, .icon {
+    margin-right: var(--spacing-xs);
+    flex-shrink: 0;
+  }
+  
+  // Loading state
+  &.loading {
+    position: relative;
+    cursor: wait;
+    color: transparent;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+}
+
+// ==========================================
+// Main Container Styles
+// ==========================================
+.signup-container {
+  min-height: 100vh;
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xl) var(--spacing-md);
+  
+  @media (min-width: 768px) {
+    padding-top: var(--spacing-3xl);
+  }
+  
+  .signup-wrapper {
+    max-width: 40rem;
+    margin: 0 auto;
+    width: 100%;
+    
+    .signup-card {
       background-color: var(--bg-light);
-      color: var(--text-light);
       border-radius: var(--border-radius-lg);
-      box-shadow: var(--shadow-md);
-      width: 100%;
-      max-width: 500px;
-      padding: 2rem;
-      margin-top: 2rem;
-      transition: all 0.3s ease;
-  
-      &.dark {
+      box-shadow: var(--shadow-lg);
+      padding: var(--spacing-xl);
+      overflow: hidden;
+      transform: translateY(0);
+      transition: transform var(--duration-normal) var(--transition-ease-out),
+                 box-shadow var(--duration-normal) var(--transition-ease-out);
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-xl);
+      }
+      
+      .dark & {
         background-color: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
-  
-      .phase-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        color: var(--primary-color);
+      
+      @media (min-width: 768px) {
+        padding: var(--spacing-2xl);
       }
-  
-      .form-group {
-        margin-bottom: 1.5rem;
-  
-        label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-          color: var(--text-muted);
-        }
-  
-        input,
-        select,
-        textarea {
-          width: 100%;
-          padding: 0.75rem;
-          border: 1px solid var(--text-muted);
-          border-radius: var(--border-radius);
-          background-color: var(--bg-light);
+      
+      .signup-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+        
+        h2 {
           color: var(--text-light);
-          transition: all 0.3s ease;
+          font-size: var(--text-2xl);
+          font-weight: 700;
+          margin-bottom: var(--spacing-xs);
+        }
+        
+        p {
+          color: var(--text-muted);
+          font-size: var(--text-sm);
+        }
+      }
+    }
+  }
+}
+
+// ==========================================
+// Step Navigation - Progress Indicator
+// ==========================================
+.step-navigation {
+  margin-bottom: var(--spacing-xl);
   
-          &:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+  p {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  .steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    max-width: 280px;
+    margin: 0 auto;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      background-color: var(--neutral-outline);
+      z-index: 1;
+      
+      .dark & {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+    
+    .step {
+      position: relative;
+      z-index: 2;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--border-radius-full);
+      background-color: var(--bg-light);
+      border: 2px solid var(--neutral-outline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      transition: all var(--duration-normal) var(--transition-bounce);
+      
+      .dark & {
+        background-color: var(--bg-dark);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      
+      &.active {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2);
+        transform: scale(1.1);
+      }
+      
+      &.completed {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        
+        svg {
+          width: 1rem;
+          height: 1rem;
+          stroke-width: 3;
+        }
+        
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+    
+    .progress-bar {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      height: 2px;
+      background-color: var(--primary-color);
+      z-index: 1;
+      transition: width var(--duration-normal) var(--transition-ease-out);
+    }
+  }
+}
+
+// ==========================================
+// Form Base Styles
+// ==========================================
+.form {
+  &.phase-one,
+  &.phase-two,
+  &.phase-three,
+  &.final-phase {
+    @include form-base;
+  }
+
+  input, select, textarea {
+    @include input-base;
+  }
+  
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 3.5rem;
+  }
+  
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+    height: auto;
+  }
+  
+  button {
+    @include button-base;
+    margin-top: var(--spacing-md);
+  }
+
+  label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: var(--text-sm);
+  }
+  
+  .field-group {
+    display: flex;
+    gap: calc(var(--spacing-md) * 2.5);
+    
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    
+  }
+  
+  .error-message {
+    color: var(--error-color);
+    font-size: var(--text-xs);
+    margin-top: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    animation: fadeIn var(--duration-normal) ease;
+    
+    svg {
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+  }
+  
+  .checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      appearance: none;
+      border: 2px solid var(--neutral-color);
+      border-radius: var(--border-radius-xs);
+      position: relative;
+      
+      &:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          left: 5px;
+          top: 2px;
+          width: 5px;
+          height: 9px;
+          border: solid white;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+        }
+      }
+      
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+      }
+    }
+    
+    label {
+      margin-bottom: 0;
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+  }
+  
+  // Button variants
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    
+    &:hover:not(:disabled) {
+      background-color: rgba(var(--primary-color-rgb), 0.05);
+      transform: translateY(-2px);
+    }
+    
+    .dark & {
+      border-color: var(--primary-color);
+      
+      &:hover:not(:disabled) {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+      }
+    }
+  }
+  
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    height: auto;
+    width: auto;
+    box-shadow: none;
+    
+    &:hover:not(:disabled) {
+      background-color: rgba(var(--primary-color-rgb), 0.05);
+      box-shadow: none;
+      transform: none;
+    }
+  }
+  
+  .field {
+    position: relative;
+    transition: transform var(--duration-normal) var(--transition-ease-out);
+    
+    &:focus-within {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ==========================================
+// Phase One Form - Basic Information
+// ==========================================
+.phase-one-form, .form.phase-one {
+  @include form-base;
+  
+  .required-field::after {
+    content: "*";
+    color: var(--error-color);
+    margin-left: 4px;
+  }
+  
+  // Enhanced animations for form submission
+  &.submitting {
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  
+  // First-time user helper tips
+  .field-tip {
+    margin-top: var(--spacing-xs);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    
+    svg {
+      flex-shrink: 0;
+      margin-right: 4px;
+      color: var(--info-color);
+    }
+  }
+}
+
+// ==========================================
+// Phase Two Form - Verification
+// ==========================================
+.phase-two-form, .form.phase-two {
+  @include form-base;
+  
+  .verification-info {
+    background-color: var(--feature-bg);
+    border: 1px solid var(--feature-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+    
+    // Decorative element
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background-color: var(--primary-color);
+      opacity: 0.7;
+    }
+    
+    .dark & {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    p {
+      color: var(--text-muted);
+      font-size: var(--text-sm);
+      
+      &:not(:last-child) {
+        margin-bottom: var(--spacing-xs);
+      }
+    }
+  }
+  
+  .email-sent {
+    text-align: center;
+    padding: var(--spacing-md);
+    background-color: rgba(var(--primary-color-rgb), 0.08);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-md);
+    animation: fadeIn var(--duration-normal) ease;
+    
+    .dark & {
+      background-color: rgba(var(--primary-color-rgb), 0.15);
+    }
+    
+    p {
+      color: var(--text-light);
+      font-size: var(--text-sm);
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .resend {
+      color: var(--primary-color);
+      background: none;
+      border: none;
+      font-size: var(--text-sm);
+      cursor: pointer;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      margin: 0;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      
+      svg {
+        margin-right: var(--spacing-xs);
+        transition: transform var(--duration-normal) ease;
+      }
+      
+      &:hover:not(:disabled) {
+        text-decoration: underline;
+        background: none;
+        box-shadow: none;
+        transform: none;
+        
+        svg {
+          transform: rotate(-15deg);
+        }
+      }
+      
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      
+      // Countdown timer styling
+      .countdown {
+        font-size: var(--text-xs);
+        opacity: 0.7;
+        margin-left: var(--spacing-xs);
+      }
+    }
+  }
+  
+  .verification-code-input {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    margin: var(--spacing-lg) 0;
+    
+    input {
+      width: 2rem;
+      height: 3.5rem;
+      text-align: center;
+      font-size: var(--text-xl);
+      font-weight: 700;
+      padding: 0;
+      border-radius: var(--border-radius);
+      
+      &:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+        transform: translateY(-2px);
+      }
+      
+      &::selection {
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+// ==========================================
+// Phase Three Form - Password Setup
+// ==========================================
+.phase-three-form, .form.phase-three {
+  @include form-base;
+  
+  .password-field {
+    position: relative;
+    
+    input {
+      @include input-base;
+      padding-right: 2.5rem;
+    }
+  }
+  
+  .password-toggle {
+    position: absolute;
+    right: var(--spacing-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: var(--spacing-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-fast) ease;
+    border-radius: var(--border-radius-full);
+    
+    &:hover {
+      color: var(--text-light);
+      background-color: rgba(0, 0, 0, 0.05);
+      
+      .dark & {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--focus-ring-color);
+    }
+  }
+  
+  .password-requirements {
+    background-color: var(--feature-bg);
+    border: 1px solid var(--feature-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin: var(--spacing-xs) 0 var(--spacing-md);
+    
+    .dark & {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    h4 {
+      font-size: var(--text-sm);
+      color: var(--text-light);
+      margin-bottom: var(--spacing-xs);
+      font-weight: 600;
+    }
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      
+      li {
+        display: flex;
+        align-items: center;
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+        margin-bottom: var(--spacing-xs);
+        transition: color var(--duration-normal) ease,
+                    transform var(--duration-normal) var(--transition-bounce);
+        
+        &.valid {
+          color: var(--success-color);
+          transform: translateX(2px);
+          
+          svg {
+            opacity: 1;
           }
         }
-      }
-  
-      .next-btn {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: var(--border-radius);
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          background-color: var(--primary-dark);
+        
+        svg {
+          width: 1rem;
+          height: 1rem;
+          margin-right: var(--spacing-xs);
+          flex-shrink: 0;
+          opacity: 0.7;
+          transition: opacity var(--duration-normal) ease;
         }
       }
     }
   }
   
+  .password-strength {
+    height: 6px;
+    width: 100%;
+    background-color: var(--neutral-outline);
+    border-radius: var(--border-radius-full);
+    margin-top: var(--spacing-xs);
+    overflow: hidden;
+    
+    .dark & {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .strength-bar {
+      height: 100%;
+      border-radius: var(--border-radius-full);
+      transition: width var(--duration-slow) var(--transition-ease-out);
+      
+      &.weak {
+        width: 33.3%;
+        background-color: var(--error-color);
+      }
+      
+      &.medium {
+        width: 66.6%;
+        background-color: var(--warning-color);
+      }
+      
+      &.strong {
+        width: 100%;
+        background-color: var(--success-color);
+      }
+    }
+  }
+  
+  .strength-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-xs);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    
+    .strength-text {
+      font-weight: 500;
+      
+      &.weak {
+        color: var(--error-color);
+      }
+      
+      &.medium {
+        color: var(--warning-color);
+      }
+      
+      &.strong {
+        color: var(--success-color);
+      }
+    }
+  }
+}
+
+// ==========================================
+// Final Phase Form - Completion
+// ==========================================
+.final-phase-form, .form.final-phase {
+  @include form-base;
+
+  select[multiple] {
+    height: 90px;
+    min-height: 10px;
+    padding: 0;
+    overflow: hidden;
+    appearance: none; /* Optional: Remove default dropdown style for better control */
+    -webkit-appearance: none; /* Safari */
+    -moz-appearance: none; /* Firefox */
+    option {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      margin-bottom: 2px;
+      border-radius: 4px;
+      
+      &:checked {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--primary-color);
+        font-weight: 500;
+      }
+    }
+  }
+  
+  // Enhanced profile setup options
+  .profile-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    
+    .profile-option {
+      border: 2px solid var(--neutral-outline);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-md);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--transition-ease-out);
+      
+      &:hover {
+        border-color: var(--primary-outline);
+        background-color: rgba(var(--primary-color-rgb), 0.03);
+        transform: translateY(-2px);
+      }
+      
+      &.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(var(--primary-color-rgb), 0.05);
+        
+        .option-icon {
+          background-color: var(--primary-color);
+          color: white;
+        }
+      }
+      
+      .option-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background-color: var(--neutral-outline);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--spacing-sm);
+        transition: all var(--duration-normal) var(--transition-ease-out);
+        
+        svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+      }
+      
+      h4 {
+        font-size: var(--text-sm);
+        font-weight: 600;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      p {
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+      }
+    }
+  }
+}

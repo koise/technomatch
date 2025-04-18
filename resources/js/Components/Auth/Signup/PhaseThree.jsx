@@ -1,26 +1,162 @@
-// src/components/PhaseThree.jsx
+// src/Components/Auth/Signup/PhaseThree.jsx
 import { useForm } from 'react-hook-form';
-import { useSignup } from '../../../context/SignupContext';
-import styles from '../../../../scss/Components/Auth/Signup/PhaseThree.module.scss';
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { useSignup } from '@/context/SignupContext';
+import { User, Lock, Eye, EyeOff, ArrowLeft, Check, X } from 'lucide-react';
 
-export default function PhaseThree({ onNext }) {
-  const { register, handleSubmit, watch } = useForm();
-  const { setFormData } = useSignup();
-  const password = watch("password");
+export default function PhaseThree({ onNext, onBack }) {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { setFormData, formData } = useSignup();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState('');
+
+  const password = watch("password", "");
+  const confirmPassword = watch("confirmPassword", "");
+
+  // Calculate password strength
+  useEffect(() => {
+    if (!password) {
+      setPasswordStrength('');
+      return;
+    }
+
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const isLongEnough = password.length >= 8;
+
+    const strength = [hasLowerCase, hasUpperCase, hasNumbers, hasSpecial, isLongEnough]
+      .filter(Boolean).length;
+
+    if (strength <= 2) setPasswordStrength('weak');
+    else if (strength <= 4) setPasswordStrength('medium');
+    else setPasswordStrength('strong');
+  }, [password]);
 
   const onSubmit = data => {
     setFormData(prev => ({ ...prev, ...data }));
     onNext();
   };
 
+  // Check for each password requirement
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasNumbers = /\d/.test(password);
+  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const isLongEnough = password.length >= 8;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <input placeholder="In-game Username" {...register('username')} required />
-      <input placeholder="Password" type="password" {...register('password')} required />
-      <input placeholder="Confirm Password" type="password" {...register('confirmPassword', {
-        validate: value => value === password || "Passwords do not match"
-      })} required />
-      <button type="submit">Next</button>
+    <form onSubmit={handleSubmit(onSubmit)} className="form phase-three">
+      <div className="relative w-full">
+        <input 
+          placeholder="Username" 
+          defaultValue={formData.username}
+          {...register('username', { 
+            required: 'Username is required',
+            minLength: { value: 3, message: 'Username must be at least 3 characters' }
+          })}
+          className={errors.username ? 'error' : ''}
+        />
+        {errors.username && (
+          <p className="error-message">{errors.username.message}</p>
+        )}
+      </div>
+
+      <div className="relative w-full">
+        <div className="relative">
+          <input 
+            placeholder="Password" 
+            type={showPassword ? "text" : "password"} 
+            {...register('password', { 
+              required: 'Password is required',
+              minLength: { value: 8, message: 'Password must be at least 8 characters' }
+            })}
+            className={errors.password ? 'error' : ''}
+          />
+        </div>
+        {errors.password && (
+          <p className="error-message">{errors.password.message}</p>
+        )}
+      </div>
+
+      <div className="password-requirements">
+        <h4>Password Requirements:</h4>
+        <ul>
+          <li className={isLongEnough ? 'valid' : ''}>
+            {isLongEnough ? <Check size={14} /> : <X size={14} />}
+            At least 8 characters
+          </li>
+          <li className={hasUpperCase ? 'valid' : ''}>
+            {hasUpperCase ? <Check size={14} /> : <X size={14} />}
+            One uppercase letter
+          </li>
+          <li className={hasLowerCase ? 'valid' : ''}>
+            {hasLowerCase ? <Check size={14} /> : <X size={14} />}
+            One lowercase letter
+          </li>
+          <li className={hasNumbers ? 'valid' : ''}>
+            {hasNumbers ? <Check size={14} /> : <X size={14} />}
+            One number
+          </li>
+          <li className={hasSpecial ? 'valid' : ''}>
+            {hasSpecial ? <Check size={14} /> : <X size={14} />}
+            One special character
+          </li>
+        </ul>
+        
+        {password && (
+          <div className="password-strength">
+            <div className={`strength-bar ${passwordStrength}`}></div>
+          </div>
+        )}
+      </div>
+
+      <div className="relative w-full">
+        <div className="relative">
+          <input 
+            placeholder="Confirm Password" 
+            type={showConfirmPassword ? "text" : "password"} 
+            {...register('confirmPassword', { 
+              required: 'Please confirm your password',
+              validate: value => value === password || "Passwords do not match"
+            })}
+            className={errors.confirmPassword ? 'error' : ''}
+          />
+        </div>
+        {errors.confirmPassword && (
+          <p className="error-message">{errors.confirmPassword.message}</p>
+        )}
+      </div>
+
+      <div className="flex gap-4">
+        <motion.button 
+          type="button"
+          className="btn-secondary"
+          onClick={onBack}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          style={{ 
+            backgroundColor: 'transparent', 
+            color: 'var(--primary-color)',
+            border: '1px solid var(--primary-color)'
+          }}
+        >
+          <ArrowLeft size={16} className="mr-2" /> Back
+        </motion.button>
+        
+        <motion.button 
+          type="submit"
+          className="flex-1"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={!isLongEnough || !hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecial || password !== confirmPassword}
+        >
+          Continue
+        </motion.button>
+      </div>
     </form>
   );
 }

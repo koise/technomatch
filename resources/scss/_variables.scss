@@ -1,3 +1,6 @@
+// Enhanced _variables.scss
+// Core design system variables
+
 // Base theme variables
 :root {
   // Base colors
@@ -12,18 +15,93 @@
   --header-text: #000103;
   
   // Primary color and variants
-  --primary-color: #ff4d4f;     
-  --primary-color-rgb: 255, 77, 79;
-  --primary-dark: #d9363e;      
-  --primary-outline: #ffa39e;
-  --primary-light-color: #fdd8c2d8;
+  --primary-color: #e53e3e;     // More intense red
+  --primary-color-rgb: 229, 62, 62;
+  --primary-dark: #c53030;      // Darker red
+  --primary-outline: #feb2b2;   // Light red for outlines
+  --primary-light-color: #fed7d7;  // Very light red
+  
+  // Secondary color palette - shifted to red-purple
+  --secondary-color: #b83280;   // Red-purple
+  --secondary-color-rgb: 184, 50, 128;
+  --secondary-dark: #97266d;    // Darker red-purple
+  --secondary-outline: #fbd5e3; // Light pink outline
+  
+  // Success colors - shifted towards red-green
+  --success-color: #38a169;     // Keeping green but slightly warmer
+  --success-color-rgb: 56, 161, 105;
+  --success-dark: #2f855a;      // Darker green
+  --success-outline: #c6f6d5;   // Light green outline
+  
+  // Warning colors - shifted more orange-red
+  --warning-color: #dd6b20;     // Orange-red
+  --warning-color-rgb: 221, 107, 32;
+  --warning-dark: #c05621;      // Darker orange-red
+  --warning-outline: #feebc8;   // Light orange outline
+  
+  // Error colors - pure red
+  --error-color: #e53e3e;       // Pure red
+  --error-color-rgb: 229, 62, 62;
+  --error-dark: #c53030;        // Darker red
+  --error-outline: #fed7d7;     // Light red outline
+  
+  // Info colors - shifted to purple-red
+  --info-color: #805ad5;        // Purple with red undertone
+  --info-color-rgb: 128, 90, 213;
+  --info-dark: #6b46c1;         // Darker purple
+  --info-outline: #e9d8fd;      // Light purple outline
+  
+  // Neutral colors - warmer grays with red undertones
+  --neutral-color: #718096;     // Warm gray
+  --neutral-color-rgb: 113, 128, 150;
+  --neutral-dark: #4a5568;      // Darker warm gray
+  --neutral-outline: #e2e8f0;   // Light warm gray
+  
+  // Accent colors - red-violet
+  --accent-color: #9f7aea;      // Red-violet
+  --accent-color-rgb: 159, 122, 234;
+  --accent-dark: #805ad5;       // Darker red-violet
+  --accent-outline: #e9d8fd;    // Light red-violet
+  
+  // Expanded palette - colorful options with red undertones
+  --teal-color: #319795;        // Teal with slightly warmer undertone
+  --teal-color-rgb: 49, 151, 149;
+  --teal-dark: #2c7a7b;         // Darker teal
+  --teal-outline: #b2f5ea;      // Light teal outline
+  
+  --amber-color: #ed8936;       // Amber shifted towards red
+  --amber-color-rgb: 237, 137, 54;
+  --amber-dark: #dd6b20;        // Darker amber-red
+  --amber-outline: #feebc8;     // Light amber outline
+  
+  --rose-color: #eb5286;        // Rose - already reddish
+  --rose-color-rgb: 235, 82, 134;
+  --rose-dark: #d53f8c;         // Darker rose
+  --rose-outline: #fed7e2;      // Light rose outline
+  
+  --emerald-color: #38a169;     // Emerald with slight warm undertone
+  --emerald-color-rgb: 56, 161, 105;
+  --emerald-dark: #2f855a;      // Darker emerald
+  --emerald-outline: #c6f6d5;   // Light emerald outline
+  
+  --cyan-color: #0d9488;        // Cyan with warmer tone
+  --cyan-color-rgb: 13, 148, 136;
+  --cyan-dark: #047857;         // Darker, warmer cyan
+  --cyan-outline: #a5f3fc;      // Light cyan outline
   
   // UI elements
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  
+  // Border radius
+  --border-radius-xs: 4px;
+  --border-radius-sm: 6px;
   --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
   
   // Feature card
   --feature-bg: rgba(255, 255, 255, 0.05);
@@ -33,11 +111,97 @@
   --leaderboard-bg: rgba(255, 255, 255, 0.03);
   --leaderboard-border: rgba(255, 255, 255, 0.1);
   --leaderboard-item: rgba(255, 255, 255, 0.05);
-
-  --border-radius-sm: 6px;
-  --border-radius: 8px;
-  --border-radius-lg: 12px;
   
+  // Spacing
+  --spacing-1: 0.25rem;  // 4px
+  --spacing-2: 0.5rem;   // 8px
+  --spacing-3: 0.75rem;  // 12px
+  --spacing-4: 1rem;     // 16px
+  --spacing-5: 1.25rem;  // 20px
+  --spacing-6: 1.5rem;   // 24px
+  --spacing-8: 2rem;     // 32px
+  --spacing-10: 2.5rem;  // 40px
+  --spacing-12: 3rem;    // 48px
+  --spacing-16: 4rem;    // 64px
+  --spacing-20: 5rem;    // 80px
+
+    
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+    
+  // Typography
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  // Font sizes
+  --text-xs: 0.75rem;   // 12px
+  --text-sm: 0.875rem;  // 14px
+  --text-base: 1rem;    // 16px
+  --text-lg: 1.125rem;  // 18px
+  --text-xl: 1.25rem;   // 20px
+  --text-2xl: 1.5rem;   // 24px
+  --text-3xl: 1.875rem; // 30px
+  --text-4xl: 2.25rem;  // 36px
+  --text-5xl: 3rem;     // 48px
+  
+  // Line heights
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  
+  // Form element specific
+  --input-bg: var(--bg-light);
+  --input-border: rgba(var(--primary-color-rgb), 0.1);
+  --input-focus-border: var(--primary-outline);
+  --input-focus-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15);
+  --input-text: var(--text-light);
+  --input-placeholder: var(--text-muted);
+  
+  // Button variants
+  --button-primary-bg: var(--primary-color);
+  --button-primary-hover: var(--primary-dark);
+  --button-primary-text: white;
+  
+  --button-secondary-bg: var(--secondary-color);
+  --button-secondary-hover: var(--secondary-dark);
+  --button-secondary-text: white;
+  
+  // Additional button variants
+  --button-info-bg: var(--info-color);
+  --button-info-hover: var(--info-dark);
+  --button-info-text: white;
+  
+  --button-neutral-bg: var(--neutral-color);
+  --button-neutral-hover: var(--neutral-dark);
+  --button-neutral-text: white;
+  
+  --button-teal-bg: var(--teal-color);
+  --button-teal-hover: var(--teal-dark);
+  --button-teal-text: white;
+  
+  --button-rose-bg: var(--rose-color);
+  --button-rose-hover: var(--rose-dark);
+  --button-rose-text: white;
+  
+  // Z-index scale
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-modal: 100;
+  --z-tooltip: 200;
+  --z-toast: 300;
 }
 
 // Dark theme variables
@@ -53,11 +217,80 @@
   --header-bg: #111827;
   --header-text: #f9fafb;
   
-  // Primary color and variants (slightly brighter for dark mode)
-  --primary-color: #ff312e;
-  --primary-color-rgb: 255, 49, 46;
-  --primary-dark: #ff1a17;
-  --primary-outline: #ff7875;
+  // Primary color and variants - brighter reds for dark mode
+  --primary-color: #f56565;
+  --primary-color-rgb: 245, 101, 101;
+  --primary-dark: #e53e3e;
+  --primary-outline: #fc8181;
+  --primary-light-color: rgba(245, 101, 101, 0.15);
+  
+  // Secondary color palette - red-purple for dark mode
+  --secondary-color: #d53f8c;
+  --secondary-color-rgb: 213, 63, 140;
+  --secondary-dark: #b83280;
+  --secondary-outline: rgba(213, 63, 140, 0.25);
+  
+  // Success colors - warmer green for dark mode
+  --success-color: #48bb78;
+  --success-color-rgb: 72, 187, 120;
+  --success-dark: #38a169;
+  --success-outline: rgba(72, 187, 120, 0.25);
+  
+  // Warning colors - orange-red for dark mode
+  --warning-color: #ed8936;
+  --warning-color-rgb: 237, 137, 54;
+  --warning-dark: #dd6b20;
+  --warning-outline: rgba(237, 137, 54, 0.25);
+  
+  // Error colors - bright red for dark mode
+  --error-color: #f56565;
+  --error-color-rgb: 245, 101, 101;
+  --error-dark: #e53e3e;
+  --error-outline: rgba(245, 101, 101, 0.25);
+  
+  // Info colors - red-purple for dark mode
+  --info-color: #9f7aea;
+  --info-color-rgb: 159, 122, 234;
+  --info-dark: #805ad5;
+  --info-outline: rgba(159, 122, 234, 0.25);
+  
+  // Neutral colors - warmer grays for dark mode
+  --neutral-color: #a0aec0;
+  --neutral-color-rgb: 160, 174, 192;
+  --neutral-dark: #718096;
+  --neutral-outline: rgba(160, 174, 192, 0.25);
+  
+  // Accent colors - red-violet for dark mode
+  --accent-color: #b794f4;
+  --accent-color-rgb: 183, 148, 244;
+  --accent-dark: #9f7aea;
+  --accent-outline: rgba(183, 148, 244, 0.25);
+  
+  // Expanded palette - colorful options with red undertones for dark mode
+  --teal-color: #4fd1c5;
+  --teal-color-rgb: 79, 209, 197;
+  --teal-dark: #38b2ac;
+  --teal-outline: rgba(79, 209, 197, 0.25);
+  
+  --amber-color: #fbd38d;
+  --amber-color-rgb: 251, 211, 141;
+  --amber-dark: #f6ad55;
+  --amber-outline: rgba(251, 211, 141, 0.25);
+  
+  --rose-color: #ed64a6;
+  --rose-color-rgb: 237, 100, 166;
+  --rose-dark: #d53f8c;
+  --rose-outline: rgba(237, 100, 166, 0.25);
+  
+  --emerald-color: #48bb78;
+  --emerald-color-rgb: 72, 187, 120;
+  --emerald-dark: #38a169;
+  --emerald-outline: rgba(72, 187, 120, 0.25);
+  
+  --cyan-color: #38b2ac;
+  --cyan-color-rgb: 56, 178, 172;
+  --cyan-dark: #319795;
+  --cyan-outline: rgba(56, 178, 172, 0.25);
   
   // UI elements
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -73,9 +306,34 @@
   --leaderboard-bg: rgba(0, 0, 0, 0.3);
   --leaderboard-border: rgba(255, 255, 255, 0.05);
   --leaderboard-item: rgba(255, 255, 255, 0.03);
+  
+  // Form element specific
+  --input-bg: var(--bg-light);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-focus-border: var(--primary-outline);
+  --input-focus-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.25);
+  --input-text: var(--text-light);
+  --input-placeholder: var(--text-muted);
+  
+  // Additional button variants for dark mode
+  --button-info-bg: var(--info-color);
+  --button-info-hover: var(--info-dark);
+  --button-info-text: #0f172a;
+  
+  --button-neutral-bg: var(--neutral-color);
+  --button-neutral-hover: var(--neutral-dark);
+  --button-neutral-text: #0f172a;
+  
+  --button-teal-bg: var(--teal-color);
+  --button-teal-hover: var(--teal-dark);
+  --button-teal-text: #0f172a;
+  
+  --button-rose-bg: var(--rose-color);
+  --button-rose-hover: var(--rose-dark);
+  --button-rose-text: #0f172a;
 }
 
-// Media query for system preference - this will be used if localStorage is not set
+// Media query section for system preference - preserved from original
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
     // Base colors
@@ -89,12 +347,80 @@
     --header-bg: #111827;
     --header-text: #f9fafb;
     
-    // Primary color and variants
-    --primary-color: #ff312e;
-    --primary-color-rgb: 255, 49, 46;
-    --primary-dark: #ff1a17;
-    --primary-outline: #ff7875;
-    --primary-light-color: #ff312e;
+    // Primary color and variants - brighter reds for dark mode
+    --primary-color: #f56565;
+    --primary-color-rgb: 245, 101, 101;
+    --primary-dark: #e53e3e;
+    --primary-outline: #fc8181;
+    --primary-light-color: rgba(245, 101, 101, 0.15);
+    
+    // Secondary color palette - red-purple for system preference
+    --secondary-color: #d53f8c;
+    --secondary-color-rgb: 213, 63, 140;
+    --secondary-dark: #b83280;
+    --secondary-outline: rgba(213, 63, 140, 0.25);
+    
+    // Success colors - warmer green for system preference
+    --success-color: #48bb78;
+    --success-color-rgb: 72, 187, 120;
+    --success-dark: #38a169;
+    --success-outline: rgba(72, 187, 120, 0.25);
+    
+    // Warning colors - orange-red for system preference
+    --warning-color: #ed8936;
+    --warning-color-rgb: 237, 137, 54;
+    --warning-dark: #dd6b20;
+    --warning-outline: rgba(237, 137, 54, 0.25);
+    
+    // Error colors - bright red for system preference
+    --error-color: #f56565;
+    --error-color-rgb: 245, 101, 101;
+    --error-dark: #e53e3e;
+    --error-outline: rgba(245, 101, 101, 0.25);
+    
+    // Info colors - red-purple for system preference
+    --info-color: #9f7aea;
+    --info-color-rgb: 159, 122, 234;
+    --info-dark: #805ad5;
+    --info-outline: rgba(159, 122, 234, 0.25);
+    
+    // Neutral colors - warmer grays for system preference
+    --neutral-color: #a0aec0;
+    --neutral-color-rgb: 160, 174, 192;
+    --neutral-dark: #718096;
+    --neutral-outline: rgba(160, 174, 192, 0.25);
+    
+    // Accent colors - red-violet for system preference
+    --accent-color: #b794f4;
+    --accent-color-rgb: 183, 148, 244;
+    --accent-dark: #9f7aea;
+    --accent-outline: rgba(183, 148, 244, 0.25);
+    
+    // Expanded palette - colorful options with red undertones for system preference
+    --teal-color: #4fd1c5;
+    --teal-color-rgb: 79, 209, 197;
+    --teal-dark: #38b2ac;
+    --teal-outline: rgba(79, 209, 197, 0.25);
+    
+    --amber-color: #fbd38d;
+    --amber-color-rgb: 251, 211, 141;
+    --amber-dark: #f6ad55;
+    --amber-outline: rgba(251, 211, 141, 0.25);
+    
+    --rose-color: #ed64a6;
+    --rose-color-rgb: 237, 100, 166;
+    --rose-dark: #d53f8c;
+    --rose-outline: rgba(237, 100, 166, 0.25);
+    
+    --emerald-color: #48bb78;
+    --emerald-color-rgb: 72, 187, 120;
+    --emerald-dark: #38a169;
+    --emerald-outline: rgba(72, 187, 120, 0.25);
+    
+    --cyan-color: #38b2ac;
+    --cyan-color-rgb: 56, 178, 172;
+    --cyan-dark: #319795;
+    --cyan-outline: rgba(56, 178, 172, 0.25);
     
     // UI elements
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -110,6 +436,31 @@
     --leaderboard-bg: rgba(0, 0, 0, 0.3);
     --leaderboard-border: rgba(255, 255, 255, 0.05);
     --leaderboard-item: rgba(255, 255, 255, 0.03);
+    
+    // Form element specific
+    --input-bg: var(--bg-light);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-border: var(--primary-outline);
+    --input-focus-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.25);
+    --input-text: var(--text-light);
+    --input-placeholder: var(--text-muted);
+    
+    // Additional button variants for system preference
+    --button-info-bg: var(--info-color);
+    --button-info-hover: var(--info-dark);
+    --button-info-text: #0f172a;
+    
+    --button-neutral-bg: var(--neutral-color);
+    --button-neutral-hover: var(--neutral-dark);
+    --button-neutral-text: #0f172a;
+    
+    --button-teal-bg: var(--teal-color);
+    --button-teal-hover: var(--teal-dark);
+    --button-teal-text: #0f172a;
+    
+    --button-rose-bg: var(--rose-color);
+    --button-rose-hover: var(--rose-dark);
+    --button-rose-text: #0f172a;
   }
 }
 
@@ -132,4 +483,3 @@ h5,
 h6 {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
-
