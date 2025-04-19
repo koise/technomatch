@@ -7,7 +7,7 @@ import PhaseThree from '@/Components/Auth/Signup/PhaseThree';
 import FinalPhase from '@/Components/Auth/Signup/FinalPhase';
 import StepNavigation from '@/Components/Auth/Signup/StepNavigation';
 import LoginHeader from '@/Components/Partials/LoginHeader';
-import { ThemeProvider, useTheme } from '@/context/ThemeContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import '../../../scss/Pages/Signup.scss';
 
 const Signup = () => {

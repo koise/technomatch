@@ -3,25 +3,26 @@ import { motion } from 'framer-motion';
 import { Link } from '@inertiajs/react';
 import { ThemeProvider } from '../context/ThemeContext';
 import Header from '@/Components/Partials/Header'; 
+import Footer from '@/Components/Partials/Footer'; 
 import '../../scss/Home.scss';
 
-// Enhanced Feature Card with better animation
+// Enhanced Feature Card
 const FeatureCard = ({ title, description, youtubeLink, index }) => (
   <motion.article
     className={`feature ${index % 2 === 0 ? 'feature-left' : 'feature-right'}`}
     initial={{ opacity: 0, y: 50 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, amount: 0.2 }}
-    transition={{ duration: 0.7, ease: "easeOut" }}
+    transition={{ duration: 0.7, ease: 'easeOut' }}
   >
-    <div className="feature-description" id = "#faetures">
+    <div className="feature-description" id="#features">
       <h2>{title}</h2>
       {description}
     </div>
     <motion.div 
       className="feature-tutorial"
       whileHover={{ scale: 1.03 }}
-      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
     >
       {youtubeLink ? (
         <iframe
@@ -44,12 +45,10 @@ const Home = () => {
     {
       title: 'Progressive Mode',
       description: (
-        <>
-          <p>
-            Start your coding journey with beginner-friendly challenges and gradually advance as you improve.
-            TechnoClash provides a structured learning path where each challenge builds upon the previous one, ensuring steady progress.
-          </p>
-        </>
+        <p>
+          Start your coding journey with beginner-friendly challenges and gradually advance.
+          TechnoClash provides a structured path where each challenge builds upon the last.
+        </p>
       ),
       youtubeLink: null,
     },
@@ -57,13 +56,11 @@ const Home = () => {
       title: 'Ranked Mode',
       description: (
         <>
-          <p>
-            Ready for the next level? Battle it out in competitive matches to test your speed, accuracy, and problem-solving skills.
-          </p>
+          <p>Battle it out in competitive matches to test your speed and skill.</p>
           <ul>
-            <li><strong>Battle Royale (Solo)</strong> – Compete against multiple coders, where the last one standing wins.</li>
-            <li><strong>Blitz Mode</strong> – Solve a set of problems under strict time pressure to earn maximum points.</li>
-            <li><strong>Skill-based matchmaking</strong> – Get matched with opponents of similar skill levels.</li>
+            <li><strong>Battle Royale (Solo)</strong> – Last one standing wins.</li>
+            <li><strong>Blitz Mode</strong> – Solve under strict time pressure.</li>
+            <li><strong>Skill-based Matchmaking</strong> – Fair and competitive.</li>
           </ul>
         </>
       ),
@@ -74,11 +71,11 @@ const Home = () => {
       description: (
         <>
           <p>
-            Join exclusive coding contests hosted by TechnoClash or partner organizations to gain exposure, win prizes, and boost your portfolio.
+            Join exclusive coding contests hosted by TechnoClash or partners to win prizes and boost your portfolio.
           </p>
           <ul>
-            <li><strong>Weekly & Monthly Contests</strong> – Compete against top coders.</li>
-            <li><strong>Sponsorships & Company Challenges</strong> – Solve real-world problems.</li>
+            <li><strong>Weekly & Monthly Contests</strong></li>
+            <li><strong>Real-world Sponsorship Challenges</strong></li>
           </ul>
         </>
       ),
@@ -90,8 +87,8 @@ const Home = () => {
     <ThemeProvider>
       <div className="home">
         <Header />
-        
-        {/* Enhanced Hero Section with Animation */}
+
+        {/* Hero Section */}
         <section className="hero">
           <div className="hero-content">
             <motion.h1
@@ -127,9 +124,9 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Features Section */}
+        {/* Features */}
         <section id="explore" className="features">
-          <motion.h2 
+          <motion.h2
             className="features-header"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -145,7 +142,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Enhanced Leaderboard Section */}
+        {/* Leaderboard */}
         <section id="leaderboard" className="leaderboard">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -155,7 +152,7 @@ const Home = () => {
           >
             Track Your Progress in <span>Real Time!</span>
           </motion.h2>
-          <motion.div 
+          <motion.div
             className="leaderboard-content"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -175,6 +172,7 @@ const Home = () => {
           </motion.div>
         </section>
       </div>
+      <Footer />
     </ThemeProvider>
   );
 };

@@ -1,12 +1,13 @@
 import React from 'react';
-import Headerlogged from '@/Components/Partials/LoginHeader';
+import Headerlogged from '@/Components/Partials/HeaderLogged';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 const Dashboard = () => {
   return (
     <div>
-      <Headerlogged />
-      {/* You can add the rest of your dashboard content below */}
-      <h1>Welcome to the Dashboard</h1>
+      <ThemeProvider>
+        <Headerlogged />
+      </ThemeProvider>
     </div>
   );
 };

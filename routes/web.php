@@ -20,7 +20,7 @@ Route::get('/signup', function () { return Inertia::render('Auth/Signup');});
 
 Route::post('/login', [UserLoginController::class, 'login'])->name('login');
 
-Route::get('/dashboard', function () { return Inertia::render('Auth/Dashboard');});
+Route::get('/dashboard', function () { return Inertia::render('Users/Dashboard');});
 Route::get('/code-arena', function () { return Inertia::render('Users/CodeArena'); });
 
 

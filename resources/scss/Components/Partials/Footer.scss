@@ -1,0 +1,94 @@
+@import '../../variables';
+
+.footer {
+  background-color: var(--bg-darker);
+  color: var(--text-light);
+  padding: var(--spacing-6) var(--spacing-4);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  box-shadow: var(--shadow-lg);
+  border-top: 1px solid var(--neutral-outline);
+  width: 98.2%;
+  position: relative;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+
+  .footer-logo {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-1);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-6);
+
+    a {
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.3s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 100%;
+        height: 2px;
+        background-color: var(--primary-color);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+        transform-origin: left;
+      }
+
+      &:hover {
+        color: var(--primary-color);
+
+        &::after {
+          transform: scaleX(1);
+        }
+      }
+    }
+  }
+
+  .footer-copy {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    opacity: 0.8;
+    margin-top: var(--spacing-2);
+  }
+}
+
+// Dark mode
+.dark .footer {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  border-top-color: var(--neutral-outline);
+}
+
+// Subtle entrance animation
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
