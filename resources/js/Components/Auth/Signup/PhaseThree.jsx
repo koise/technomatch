@@ -1,9 +1,9 @@
-// src/Components/Auth/Signup/PhaseThree.jsx
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useSignup } from '@/context/SignupContext';
 import { User, Lock, Eye, EyeOff, ArrowLeft, Check, X } from 'lucide-react';
+import axios from 'axios';
 
 export default function PhaseThree({ onNext, onBack }) {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -11,9 +11,11 @@ export default function PhaseThree({ onNext, onBack }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState('');
+  const [usernameExists, setUsernameExists] = useState(false); // Track if the username exists
 
   const password = watch("password", "");
   const confirmPassword = watch("confirmPassword", "");
+  const username = watch("username", "");
 
   // Calculate password strength
   useEffect(() => {
@@ -21,7 +23,6 @@ export default function PhaseThree({ onNext, onBack }) {
       setPasswordStrength('');
       return;
     }
-
     const hasLowerCase = /[a-z]/.test(password);
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumbers = /\d/.test(password);
@@ -36,16 +37,52 @@ export default function PhaseThree({ onNext, onBack }) {
     else setPasswordStrength('strong');
   }, [password]);
 
-  const onSubmit = data => {
-    setFormData(prev => ({ ...prev, ...data }));
-    onNext();
-  };
+  // Check if username exists when username changes
+  useEffect(() => {
+    if (username) {
+      axios.post('/check-username', { username })
+        .then(response => {
+          setUsernameExists(response.data.exists);
+        })
+        .catch(error => {
+          console.error("Error checking username:", error);
+        });
+    }
+  }, [username]);
 
-  // Check for each password requirement
+  const onSubmit = async (data) => {
+    if (usernameExists) {
+      alert("Username already exists.");
+      return;
+    }
+  
+    // Set merged form data first
+    setFormData(prev => ({ ...prev, ...data }));
+  
+    const payload = {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      role: formData.role || 'Student',
+      username: data.username,
+      password: data.password,
+    };
+  
+    try {
+      const res = await axios.post('/register', payload);
+      if (res.data.success) {
+        console.log(res);
+        onNext();
+      }
+    } catch (err) {
+      console.error("Registration error:", err.response?.data || err.message);
+    }
+  };
+  
+  
   const hasLowerCase = /[a-z]/.test(password);
   const hasUpperCase = /[A-Z]/.test(password);
   const hasNumbers = /\d/.test(password);
-  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const hasSpecial = /[!@#$%^&*_(),.?":{}|<>]/.test(password);
   const isLongEnough = password.length >= 8;
 
   return (
@@ -58,10 +95,13 @@ export default function PhaseThree({ onNext, onBack }) {
             required: 'Username is required',
             minLength: { value: 3, message: 'Username must be at least 3 characters' }
           })}
-          className={errors.username ? 'error' : ''}
+          className={errors.username ? 'error' : usernameExists ? 'error-exists' : ''}
         />
         {errors.username && (
           <p className="error-message">{errors.username.message}</p>
+        )}
+        {usernameExists && (
+          <p className="error-message">Username already exists.</p>
         )}
       </div>
 
@@ -152,7 +192,7 @@ export default function PhaseThree({ onNext, onBack }) {
           className="flex-1"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          disabled={!isLongEnough || !hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecial || password !== confirmPassword}
+          disabled={!isLongEnough || !hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecial || password !== confirmPassword || usernameExists}
         >
           Continue
         </motion.button>

@@ -9,18 +9,23 @@
   right: 0;
   height: 5%;
   display: flex;
+
   justify-content: space-evenly;
   align-items: center;
   z-index: var(--z-50);
   padding: var(--spacing-2) var(--spacing-4);
   font-family: var(--applied-font, var(--font-sans));
+  width: 100%; /* Ensure 100% width */
 
   .header-container {
-    max-width: 1280px;
+    max-width: 100%; /* Changed from 1280px to 100% */
+    width: 100%; /* Added width: 100% */
     margin: 0 auto;
+    padding-left: 5%;
+    padding-right: 5%;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between; /* Changed from space-evenly to space-between */
 
     @media (max-width: 1024px) {
       flex-wrap: wrap;
@@ -29,9 +34,10 @@
 
   .logo-section {
     flex-shrink: 0;
+    flex: 1; /* Added flex:1 to align with layout */
     
     .logo {
-      font-size: var(--text-xl);
+      font-size: 32px;
       font-weight: 700;
       text-decoration: none;
       display: inline-flex;
@@ -53,6 +59,7 @@
     display: flex;
     align-items: center;
     margin-left: var(--spacing-6);
+    flex: 1; /* Added flex:1 to align with layout */
     
     @media (max-width: 768px) {
       display: none;
@@ -80,8 +87,9 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-left: auto;
-    margin-right: var(--spacing-4);
+    justify-content: center; /* Center the play button */
+    flex: 2; /* Give it more space in the flex layout */
+    margin: 0 var(--spacing-4);
     
     @media (max-width: 768px) {
       margin: var(--spacing-3) 0;
@@ -92,19 +100,21 @@
     .play-button {
       display: flex;
       align-items: center;
-      background-color: var(--primary-color);
+      justify-content: center;
+      background-color: var(--primary-dark);
       border: none;
-      padding: var(--spacing-2) var(--spacing-4);
+      padding: var(--spacing-3) var(--spacing-6); /* Increased padding to make button larger */
       border-radius: var(--border-radius);
       color: white;
-      font-size: var(--text-sm);
+      font-size: var(--text-base); /* Increased font size */
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      min-width: 188px; /* Set a minimum width for the button */
       
       &:hover {
-        background-color: var(--primary-dark-color);
+        background-color: var(--primary-color);
         transform: translateY(-1px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
@@ -114,67 +124,16 @@
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       
-      &.disabled {
-        background-color: var(--bg-darker);
-        color: var(--text-muted);
-        cursor: not-allowed;
-        
-        &:hover {
-          transform: none;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-      }
+      /* Removed the disabled class styling since we don't want to disable the button */
       
       .play-icon {
         margin-right: var(--spacing-2);
+        font-size: 18px; /* Increased icon size */
       }
       
       .dropdown-icon {
         margin-left: var(--spacing-2);
-        font-size: 14px;
-      }
-    }
-    
-    // User Status Indicator
-    .user-status {
-      display: flex;
-      align-items: center;
-      margin-left: var(--spacing-3);
-      font-size: var(--text-xs);
-      color: var(--text-muted);
-      
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: var(--border-radius-full);
-        margin-right: var(--spacing-1);
-        
-        &.online {
-          background-color: var(--success-color);
-        }
-      }
-      
-      .status-icon {
-        margin-right: var(--spacing-1);
-        font-size: 14px;
-        
-        &.queuing {
-          color: var(--warning-color);
-        }
-        
-        &.playing {
-          color: var(--primary-color);
-        }
-        
-        &.post-match {
-          color: var(--success-color);
-        }
-      }
-      
-      .status-text {
-        @media (max-width: 480px) {
-          display: none;
-        }
+        font-size: 16px; /* Increased icon size */
       }
     }
     
@@ -182,7 +141,8 @@
     .game-mode-menu {
       position: absolute;
       top: calc(100% + 5px);
-      left: 0;
+      left: 50%; /* Center the menu */
+      transform: translateX(-50%); /* Center the menu */
       width: 280px;
       background-color: var(--bg-light);
       border-radius: var(--border-radius);
@@ -255,11 +215,7 @@
             }
           }
         }
-        .game-mode-option:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          pointer-events: none;
-        }        
+        /* Removed the disabled styling for game mode option */
       }
     }
   }
@@ -268,7 +224,8 @@
   .header-actions {
     display: flex;
     align-items: center;
-    margin-left: auto;
+    flex: 1; /* Added flex:1 to align with layout */
+    justify-content: flex-end; /* Align to the right */
     
     @media (max-width: 768px) {
       margin-left: 0;
@@ -345,42 +302,6 @@
             color: var(--text-muted);
           }
         }
-      }
-    }
-    
-    // Classes Badge
-    .classes-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--secondary-color);
-      color: white;
-      width: 24px;
-      height: 24px;
-      border-radius: var(--border-radius-full);
-      font-size: var(--text-xs);
-      font-weight: 600;
-      margin-right: var(--spacing-3);
-      position: relative;
-      
-      .classes-icon {
-        font-size: 12px;
-      }
-      
-      .classes-count {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background-color: var(--error-color);
-        color: white;
-        width: 16px;
-        height: 16px;
-        border-radius: var(--border-radius-full);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        font-weight: 600;
       }
     }
     

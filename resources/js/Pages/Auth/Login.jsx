@@ -33,22 +33,19 @@ export default function Login() {
     }
   
     try {
-      // Make the login request
       const response = await axios.post('/login', {
-        login: data.email,
+        username_or_email: data.email,
         password: data.password,
         remember_me: rememberMe,
       });
-  
+      
       if (response.status === 200) {
-        Inertia.visit('/code-arena');
+        Inertia.visit('/dashboard');
       }
     } catch (error) {
-      // Log the entire error object to inspect it
       console.log('Login Error:', error);
   
       if (error.response) {
-        // If the response is present, log the response data
         console.log('Error Response:', error.response.data);
   
         const { message, errors } = error.response.data;

@@ -1,27 +1,45 @@
-// src/Components/Auth/Signup/FinalPhase.jsx
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useSignup } from '@/context/SignupContext';
-import { ArrowLeft, BadgeCheck } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, Camera, Check } from 'lucide-react';
 
 export default function FinalPhase({ onBack }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { setFormData, formData } = useSignup();
   const [submitted, setSubmitted] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState(formData.avatar || 'default-1.svg');
+
+  // Default avatar options
+  const avatarOptions = [
+    'default-1.svg',
+    'default-2.svg',
+    'default-3.svg',
+    'default-4.svg',
+    'default-5.svg',
+    'default-6.svg',
+    'default-7.svg',
+    'default-8.svg',
+    'default-9.svg',
+    'default-10.svg',
+    'default-11.svg',
+    'default-12.svg',
+  ];
 
   const onSubmit = data => {
-    // Convert multi-select to array if it's a single value
     if (data.language && !Array.isArray(data.language)) {
       data.language = [data.language];
     }
 
-    const finalPayload = { ...formData, ...data };
+    const finalPayload = { 
+      ...formData, 
+      ...data,
+      avatar: selectedAvatar 
+    };
+    
     setFormData(finalPayload);
 
-    // Styled console log
     console.log('%c✅ Final Signup Data:', 'color: green; font-weight: bold;', finalPayload);
-    // JSON version
     console.log('📦 Final JSON:', JSON.stringify(finalPayload, null, 2));
 
     setSubmitted(true);
@@ -103,9 +121,35 @@ export default function FinalPhase({ onBack }) {
     );
   }
   
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form final-phase">
+      {/* Profile Picture Selection */}
+      <div className="profile-avatar-section">
+        <label>Choose Avatar </label>
+        <div className="avatar-grid">
+          {avatarOptions.map((avatar) => (
+            <div 
+              key={avatar} 
+              className={`avatar-option ${selectedAvatar === avatar ? 'selected' : ''}`}
+              onClick={() => setSelectedAvatar(avatar)}
+            >
+              <div className="avatar-wrapper">
+                <img 
+                  src={`/avatar/${avatar}`} 
+                  alt={`Avatar ${avatar}`} 
+                  className="avatar-image"
+                />
+                {selectedAvatar === avatar && (
+                  <div className="selected-indicator">
+                    <Check size={16} />
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <label>Preferred Programming Languages (Optional)</label>
       <select 
         {...register('language')}

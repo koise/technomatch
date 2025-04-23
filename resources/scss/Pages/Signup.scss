@@ -855,65 +855,176 @@ body {
       }
     }
   }
+
   
-  // Enhanced profile setup options
-  .profile-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: var(--spacing-md);
-    margin: var(--spacing-lg) 0;
-    
-    .profile-option {
-      border: 2px solid var(--neutral-outline);
-      border-radius: var(--border-radius);
-      padding: var(--spacing-md);
-      text-align: center;
-      cursor: pointer;
-      transition: all var(--duration-normal) var(--transition-ease-out);
-      
-      &:hover {
-        border-color: var(--primary-outline);
-        background-color: rgba(var(--primary-color-rgb), 0.03);
-        transform: translateY(-2px);
-      }
-      
-      &.selected {
-        border-color: var(--primary-color);
-        background-color: rgba(var(--primary-color-rgb), 0.05);
-        
-        .option-icon {
-          background-color: var(--primary-color);
-          color: white;
-        }
-      }
-      
-      .option-icon {
-        width: 3rem;
-        height: 3rem;
-        border-radius: 50%;
-        background-color: var(--neutral-outline);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto var(--spacing-sm);
-        transition: all var(--duration-normal) var(--transition-ease-out);
-        
-        svg {
-          width: 1.5rem;
-          height: 1.5rem;
-        }
-      }
-      
-      h4 {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        margin-bottom: var(--spacing-xs);
-      }
-      
-      p {
-        font-size: var(--text-xs);
-        color: var(--text-muted);
-      }
+.profile-avatar-section {
+  margin-bottom: var(--spacing-lg);
+  
+  label {
+    display: block;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: var(--text-sm);
+  }
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: var(--spacing-md);
+  
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.avatar-option {
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--transition-ease-out);
+  border-radius: var(--border-radius);
+  
+  &:hover .avatar-wrapper {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &.selected .avatar-wrapper {
+    border-color: var(--primary-color);
+    background-color: rgba(var(--primary-color-rgb), 0.05);
+    transform: translateY(-3px);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+  }
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-bottom: 100%; // Square aspect ratio
+  border: 2px solid var(--neutral-outline);
+  border-radius: var(--border-radius);
+  transition: all var(--duration-normal) var(--transition-ease-out);
+  background-color: var(--bg-light);
+  overflow: hidden;
+  
+  .dark & {
+    background-color: var(--bg-dark);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.avatar-image {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.selected-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  transform: translate(25%, 25%);
+  animation: scaleIn 0.2s var(--transition-bounce);
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: translate(25%, 25%) scale(0);
+  }
+  100% {
+    transform: translate(25%, 25%) scale(1);
+  }
+}
+
+// Add this keyframe animation for the submitted state
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.profile-option {
+  border: 2px solid var(--neutral-outline);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  text-align: center;
+  background-color: var(--primary-color); /* Fixed the background color reference */
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--transition-ease-out);
+
+  &:hover {
+    border-color: var(--primary-outline);
+    background-color: rgba(var(--primary-color-rgb), 0.04);
+    transform: translateY(-2px);
+
+    svg {
+      transform: scale(1.2); 
+      transition: transform 0.3s ease-out; /* Smooth transition for scaling */
+    }
+
+    p {
+      color: var(--text-muted); /* Make the text color muted on hover */
     }
   }
+
+  &.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(var(--primary-color-rgb), 0.05);
+
+    .option-icon {
+      background-color: var(--primary-color);
+      color: white;
+    }
+  }
+
+  .option-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: var(--neutral-outline);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-sm);
+    transition: all var(--duration-normal) var(--transition-ease-out);
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  h4 {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  p {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+}
+
+
 }

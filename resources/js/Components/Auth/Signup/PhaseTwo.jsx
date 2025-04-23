@@ -37,15 +37,13 @@ export default function PhaseTwo({ onNext, onBack }) {
   const handleSendEmail = () => {
     setEmailSent(true);
     setResending(true);
-    setCountdown(30); // Changed to 30 seconds
-    // TODO: Trigger actual email logic (API call)
+    setCountdown(30); 
   };
 
   const handleResendEmail = () => {
     if (countdown === 0) {
       setResending(true);
-      setCountdown(30); // Reset countdown to 30 seconds
-      // TODO: Trigger actual resend email logic (API call)
+      setCountdown(30); 
     }
   };
 

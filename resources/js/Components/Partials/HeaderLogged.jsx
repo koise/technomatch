@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../../context/ThemeContext';
-import { FiSun, FiMoon, FiSettings, FiUser, FiBell, FiLogOut, FiChevronDown, FiBook, FiTrendingUp, FiAward, FiCode, FiPlay, FiClock, FiCheck, FiZap } from 'react-icons/fi';
+import { FiSun, FiMoon, FiSettings, FiUser, FiBell, FiLogOut, FiChevronDown, FiBook, FiTrendingUp, FiAward, FiCode, FiPlay, FiClock, FiCheck, FiZap, FiShoppingBag, FiX } from 'react-icons/fi';
 import '../../../scss/Components/Partials/HeaderLogged.scss';
 
 const HeaderLogged = ({ user }) => {
@@ -10,15 +10,16 @@ const HeaderLogged = ({ user }) => {
   const [fontFamily, setFontFamily] = useState('var(--font-sans)');
   const [showGameModeMenu, setShowGameModeMenu] = useState(false);
   const [userStatus, setUserStatus] = useState('online'); // Default is online
+  const [queuingTime, setQueuingTime] = useState(0); // Time in seconds
+  const queuingTimerRef = useRef(null);
   
   const [activeMode, setActiveMode] = useState('progressive'); 
   const userData = user || {
     name: "Bart Jason Edades",
-    avatar: "/api/placeholder/40/40",
+    avatar: '/avatar/default-7.svg',
     progress: 75,
     rank: "Techno Crat",
     level: 42,
-    classes: ["JavaScript", "React", "Node.js"],
     progressive: {
       level: 8,
       xp: 750,
@@ -45,6 +46,36 @@ const HeaderLogged = ({ user }) => {
     document.documentElement.style.setProperty('--applied-font', fontFamily);
   }, [fontFamily]);
 
+  // Handle queuing timer
+  useEffect(() => {
+    if (userStatus === 'queuing') {
+      // Start the timer
+      queuingTimerRef.current = setInterval(() => {
+        setQueuingTime(prevTime => prevTime + 1);
+      }, 1000);
+    } else {
+      // Clear the timer when not queuing
+      if (queuingTimerRef.current) {
+        clearInterval(queuingTimerRef.current);
+        queuingTimerRef.current = null;
+        setQueuingTime(0);
+      }
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      if (queuingTimerRef.current) {
+        clearInterval(queuingTimerRef.current);
+      }
+    };
+  }, [userStatus]);
+
+  const formatQueuingTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
   const toggleProfileMenu = () => {
     setShowProfileMenu(!showProfileMenu);
     if (showSettingsMenu) setShowSettingsMenu(false);
@@ -61,6 +92,13 @@ const HeaderLogged = ({ user }) => {
     setShowGameModeMenu(!showGameModeMenu);
     if (showProfileMenu) setShowProfileMenu(false);
     if (showSettingsMenu) setShowSettingsMenu(false);
+  };
+
+  const cancelQueuing = () => {
+    if (userStatus === 'queuing') {
+      setUserStatus('online');
+      // Timer will be cleared by the useEffect
+    }
   };
 
   const switchGameMode = (mode) => {
@@ -91,7 +129,18 @@ const HeaderLogged = ({ user }) => {
   const getStatusIcon = () => {
     switch(userStatus) {
       case 'queuing':
-        return <FiClock className="status-icon queuing" />;
+        return (
+          <div className="queuing-status">
+            <FiClock className="status-icon queuing" />
+            <span className="queuing-time">{formatQueuingTime(queuingTime)}</span>
+            <button className="cancel-queue-button" onClick={(e) => {
+              e.stopPropagation();
+              cancelQueuing();
+            }}>
+              <FiX className="cancel-icon" />
+            </button>
+          </div>
+        );
       case 'playing':
         return <FiPlay className="status-icon playing" />;
       case 'post-match':
@@ -105,7 +154,7 @@ const HeaderLogged = ({ user }) => {
   const getStatusText = () => {
     switch(userStatus) {
       case 'queuing':
-        return 'Finding match...';
+        return `Finding match... (${formatQueuingTime(queuingTime)})`;
       case 'playing':
         return 'In match';
       case 'post-match':
@@ -127,85 +176,93 @@ const HeaderLogged = ({ user }) => {
           </a>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation with Play Button in the middle */}
         <nav className="nav-links">
           <a href="/dashboard" className="nav-link">Dashboard</a>
           <a href="/classes" className="nav-link">Classes</a>
-          <a href="/challenges" className="nav-link">Challenges</a>
-          <a href="/leaderboard" className="nav-link">Leaderboard</a>
-        </nav>
-
-        {/* Game Play Button */}
-        <div className="game-play-container">
-          <button 
-            className={`play-button ${userStatus !== 'online' ? 'disabled' : ''}`}
-            onClick={toggleGameModeMenu}
-            disabled={userStatus !== 'online'}
-          >
-            <FiPlay className="play-icon" />
-            <span className="play-text">Play</span>
-            <FiChevronDown className="dropdown-icon" />
-          </button>
-
           
-          {/* Game Mode Menu */}
-          {showGameModeMenu && (
-            <div className="dropdown-menu game-mode-menu">
-              <div className="dropdown-header">
-                <h3>Select Game Mode</h3>
+          {/* Game Play Button moved inside nav */}
+          <div className="game-play-container">
+            <button 
+              className={`play-button ${userStatus !== 'online' ? 'disabled' : ''}`}
+              onClick={userStatus === 'queuing' ? cancelQueuing : toggleGameModeMenu}
+              disabled={userStatus !== 'online' && userStatus !== 'queuing'}
+            >
+              {userStatus === 'queuing' ? (
+                <>
+                  <div className="queuing-display">
+                    <FiClock className="play-icon pulsing" />
+                    <span className="queuing-text">({formatQueuingTime(queuingTime)})</span>
+                    <FiX className="cancel-icon" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <FiPlay className="play-icon" />
+                  <span className="play-text">Play</span>
+                  <FiChevronDown className="dropdown-icon" />
+                </>
+              )}
+            </button>
+
+            {/* Game Mode Menu */}
+            {showGameModeMenu && (
+              <div className="dropdown-menu game-mode-menu">
+                <div className="dropdown-header">
+                  <h3>Select Game Mode</h3>
+                </div>
+                
+                <div className="game-modes">
+                  <button 
+                    className={`game-mode-option ${activeMode === 'progressive' ? 'active' : ''}`}
+                    onClick={() => switchGameMode('progressive')}
+                  >
+                    <FiTrendingUp className="mode-icon" />
+                    <div className="mode-details">
+                      <span className="mode-name">Progressive</span>
+                      <span className="mode-description">Level up by completing challenges</span>
+                    </div>
+                  </button>
+
+                  <button 
+                    className={`game-mode-option ${activeMode === 'blitz' ? 'active' : ''}`}
+                    onClick={() => switchGameMode('blitz')}
+                  >
+                    <FiZap className="mode-icon" />
+                    <div className="mode-details">
+                      <span className="mode-name">Blitz Mode</span>
+                      <span className="mode-description">Competing with small amout of time</span>
+                    </div>
+                  </button>
+
+                  <button 
+                    className={`game-mode-option ${activeMode === 'ranked' ? 'active' : ''}`}
+                    onClick={() => switchGameMode('ranked')}
+                  >
+                    <FiAward className="mode-icon" />
+                    <div className="mode-details">
+                      <span className="mode-name">Ranked</span>
+                      <span className="mode-description">Compete against others to climb leaderboards</span>
+                    </div>
+                  </button>
+
+                  <button 
+                    className={`game-mode-option ${activeMode === 'contest' ? 'active' : ''}`} 
+                    onClick={() => switchGameMode('contest')}
+                  >
+                    <FiClock className="mode-icon" />
+                    <div className="mode-details">
+                      <span className="mode-name">Contest</span>
+                      <span className="mode-description">Scheduled competitive events — coming soon</span>
+                    </div>
+                  </button>
+                </div>
               </div>
-              
-              <div className="game-modes">
-                <button 
-                  className={`game-mode-option ${activeMode === 'progressive' ? 'active' : ''}`}
-                  onClick={() => switchGameMode('progressive')}
-                >
-                  <FiTrendingUp className="mode-icon" />
-                  <div className="mode-details">
-                    <span className="mode-name">Progressive</span>
-                    <span className="mode-description">Level up by completing challenges</span>
-                  </div>
-                </button>
-
-                <button 
-                  className={`game-mode-option ${activeMode === 'blitz' ? 'active' : ''}`}
-                  onClick={() => switchGameMode('blitz')}
-                >
-                  <FiZap className="mode-icon" />
-                  <div className="mode-details">
-                    <span className="mode-name">Blitz Mode</span>
-                    <span className="mode-description">Competing with small amout of time</span>
-                  </div>
-                </button>
-
-                <button 
-                  className={`game-mode-option ${activeMode === 'ranked' ? 'active' : ''}`}
-                  onClick={() => switchGameMode('ranked')}
-                >
-                  <FiAward className="mode-icon" />
-                  <div className="mode-details">
-                    <span className="mode-name">Ranked</span>
-                    <span className="mode-description">Compete against others to climb leaderboards</span>
-                  </div>
-                </button>
-
-                <button 
-                  className={`game-mode-option ${activeMode === 'contest' ? 'active' : ''}`} 
-                  onClick={() => switchGameMode('contest')}
-                  disabled
-                >
-                  <FiClock className="mode-icon" />
-                  <div className="mode-details">
-                    <span className="mode-name">Contest</span>
-                    <span className="mode-description">Scheduled competitive events — coming soon</span>
-                  </div>
-                </button>
-
-
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+          <a href="/leaderboard" className="nav-link">Leaderboard</a>
+          <a href="/store" className="nav-link">Store</a>
+        </nav>
 
         <div className="header-actions">
           <div className="progress-display">
@@ -270,7 +327,7 @@ const HeaderLogged = ({ user }) => {
                   </div>
                 </div>
                 
-                {/* Font Section */}
+                {/* Font Section 
                 <div className="settings-section">
                   <h4>Font</h4>
                   <div className="font-options">
@@ -285,6 +342,7 @@ const HeaderLogged = ({ user }) => {
                     ))}
                   </div>
                 </div>
+                */}
                 
                 <div className="settings-footer">
                   <a href="/account-settings">More settings</a>
