@@ -17,22 +17,27 @@ class UserLoginController extends Controller
             'password' => 'required|string',
             'remember_me' => 'nullable|boolean',
         ]);
-
+    
         $usernameOrEmail = $request->input('username_or_email');
         $user = null;
+    
         if (filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)) {
             $user = User::where('email', $usernameOrEmail)->first();
         } else {
             $user = User::where('username', $usernameOrEmail)->first();
         }
+    
         if ($user && Hash::check($request->input('password'), $user->password)) {
+            // Store user ID in session
+            session(['user_id' => $user->id]);
+    
             return response()->json([
                 'message' => 'Login successful',
                 'user' => $user,
+                'session_user_id' => session('user_id'),
             ]);
         }
-
-        // If authentication fails, return error response
+    
         return response()->json([
             'message' => 'Invalid credentials',
         ], 401);

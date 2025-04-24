@@ -1,0 +1,158 @@
+@import '../../../variables';
+
+.confirm-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%; 
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  z-index: 999;
+
+  .dialog-box {
+    background: var(--header-bg); 
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    color: #fffffa;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+    h3, p {
+      margin-bottom: 0.5rem;
+      color: var(--header-text);
+    }
+
+    .dialog-actions {
+      margin-top: 1.2rem;
+      display: flex;
+      justify-content: space-around;
+      gap: 1rem;
+      color: var(--header-text);
+
+      .btn-secondary,
+      .btn-primary {
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #fffffa;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+      }
+
+      .btn-secondary {
+        background-color: #333138;
+      }
+    }
+  }
+}
+
+/* ------------- TOAST STYLES ------------- */
+
+/* Override react-toastify defaults */
+.Toastify__toast-container {
+  width: auto !important;
+  max-width: 500px;
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  min-height: 50px !important;
+  padding: 12px 12px 12px 12px !important;
+  border-radius: 8px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.Toastify__toast-body {
+  margin: 0 !important;
+  padding: 10% !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+/* Custom toast styles */
+.Toastify__toast--error {
+  background-color: #e53935 !important; /* Bright red for errors */
+  color: white !important;
+}
+
+.Toastify__toast--success {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Toast progress bar */
+.Toastify__progress-bar {
+  height: 4px !important;
+  opacity: 0.7 !important;
+}
+
+.Toastify__progress-bar--error {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.Toastify__progress-bar--success {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Username exists toast - additional styles */
+.username-exists-toast {
+  border-left: 4px solid #ff5252 !important;
+}
+
+/* Toast animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.Toastify__toast--animate-enter {
+  animation: fadeIn 0.3s ease forwards !important;
+}
+
+.Toastify__toast--animate-exit {
+  animation: fadeOut 0.3s ease forwards !important;
+}
+
+/* Ensure toast buttons work properly */
+.Toastify__close-button {
+  opacity: 0.7 !important;
+  color: white !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+}
+
+/* Make sure text is visible */
+.Toastify__toast-body {
+  color: white !important;
+  font-family: inherit !important;
+}

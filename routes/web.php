@@ -7,6 +7,8 @@ use App\Http\Controllers\TestMailTestController;
 
 
 use App\Http\Controllers\Auth\UserLoginController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+
 
 
 Route::get('/', function () { return Inertia::render('Home');});
@@ -28,3 +30,11 @@ Route::get('/code-arena', function () { return Inertia::render('Users/CodeArena'
 Route::post('/check-username', [UserLoginController::class, 'checkUsernameExist']);
 Route::post('/login', [UserLoginController::class, 'login'])->name('login');
 Route::post('/register', [UserLoginController::class, 'store']);
+
+
+Route::prefix('email-verification')->group(function () {
+    Route::post('/send', [EmailVerificationPromptController::class, 'sendVerificationEmail']);
+    Route::post('/verify', [EmailVerificationPromptController::class, 'verifyCode']);
+    Route::post('/resend', [EmailVerificationPromptController::class, 'resendVerificationEmail']);
+    Route::post('/status', [EmailVerificationPromptController::class, 'checkVerificationStatus']);
+});

@@ -11,29 +11,18 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import '../../../scss/Pages/Signup.scss';
 
 const Signup = () => {
-  const storedStep = localStorage.getItem('signupStep');
+  const storedStep = 0;
   const [step, setStep] = useState(storedStep ? parseInt(storedStep) : 0);
 
-  // Retrieve saved inputs from localStorage, default to empty values
   const [formData, setFormData] = useState({
     phaseOneInput: localStorage.getItem('phaseOneInput') || '',
     phaseTwoInput: localStorage.getItem('phaseTwoInput') || '',
     phaseThreeInput: localStorage.getItem('phaseThreeInput') || '',
-    // Add other fields here based on your form structure
   });
 
-  // Save step to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('signupStep', step);
   }, [step]);
-
-  // Save form data to localStorage whenever any field changes
-  useEffect(() => {
-    localStorage.setItem('phaseOneInput', formData.phaseOneInput);
-    localStorage.setItem('phaseTwoInput', formData.phaseTwoInput);
-    localStorage.setItem('phaseThreeInput', formData.phaseThreeInput);
-    // Add other fields as necessary
-  }, [formData]);
 
   const next = () => {
     console.log(`Going to next step: ${step + 1}`);
@@ -46,11 +35,26 @@ const Signup = () => {
     }
   };
 
-  // Animation variants
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 }
+  };
+
+  // 🧠 Dynamic header logic
+  const getHeaderTitle = () => {
+    switch (step) {
+      case 0:
+        return "Create your account";
+      case 2:
+        return "Verify your account";
+      case 3:
+        return "Create your login credentials";
+      case 3:
+        return "Setup your profile";
+      default:
+        return "Signup";
+    }
   };
 
   return (
@@ -68,7 +72,7 @@ const Signup = () => {
               transition={{ duration: 0.4 }}
             >
               <div className="signup-header">
-                <h2>Create your account</h2>
+                <h2>{getHeaderTitle()}</h2>
               </div>
 
               <StepNavigation currentStep={step} totalSteps={4} />

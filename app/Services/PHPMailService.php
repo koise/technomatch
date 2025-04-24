@@ -4,9 +4,35 @@ namespace App\Services;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Mail\Message;
 
 class PHPMailService
 {
+    public function sendVerificationEmail(array $data)
+    {
+        try {
+            $to = $data['to'];
+            $subject = $data['subject'];
+            $code = $data['verification_code'];
+            $expiresAt = $data['expires_at'];
+            
+            Mail::send('emails.verification', [
+                'code' => $code,
+                'expires_at' => $expiresAt
+            ], function (Message $message) use ($to, $subject) {
+                $message->to($to)
+                    ->subject($subject);
+            });
+            
+            return !Mail::failures();
+        } catch (\Exception $e) {
+            Log::error('Mail sending error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public function sendMail($to, $subject, $body)
     {
         $mail = new PHPMailer(true);

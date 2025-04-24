@@ -76,7 +76,7 @@ export default function PhaseTwo({ onNext, onBack }) {
           })}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className={`input-field ${errors.email ? 'input-error' : ''}`}
-          disabled={emailSent && countdown > 0} // Disable when email is sent and countdown is not 0
+          disabled={emailSent && countdown > 0}
         />
         {errors.email && (
           <p className="error-message text-red-500 text-sm mt-1">

@@ -1,64 +1,106 @@
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSignup } from '@/context/SignupContext';
 import { User, Lock, Eye, EyeOff, ArrowLeft, Check, X } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../../../scss/Components/Auth/Signup/modalAndToast.scss';
 import axios from 'axios';
 
 export default function PhaseThree({ onNext, onBack }) {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const [isRegistering, setIsRegistering] = useState(false);
   const { setFormData, formData } = useSignup();
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState('');
-  const [usernameExists, setUsernameExists] = useState(false); // Track if the username exists
+  const [usernameExists, setUsernameExists] = useState(false);
+  const usernameToastId = useRef(null);
 
   const password = watch("password", "");
   const confirmPassword = watch("confirmPassword", "");
   const username = watch("username", "");
 
-  // Calculate password strength
+  useEffect(() => {
+    return () => {
+      if (usernameToastId.current) {
+        toast.dismiss(usernameToastId.current);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (!password) {
       setPasswordStrength('');
       return;
     }
+
     const hasLowerCase = /[a-z]/.test(password);
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumbers = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     const isLongEnough = password.length >= 8;
 
-    const strength = [hasLowerCase, hasUpperCase, hasNumbers, hasSpecial, isLongEnough]
-      .filter(Boolean).length;
+    const strength = [hasLowerCase, hasUpperCase, hasNumbers, hasSpecial, isLongEnough].filter(Boolean).length;
 
     if (strength <= 2) setPasswordStrength('weak');
     else if (strength <= 4) setPasswordStrength('medium');
     else setPasswordStrength('strong');
   }, [password]);
 
-  // Check if username exists when username changes
+
+  const usernameCheckTimeout = useRef(null);
+  
   useEffect(() => {
-    if (username) {
+    if (usernameToastId.current) {
+      toast.dismiss(usernameToastId.current);
+      usernameToastId.current = null;
+    }
+    if (!username) {
+      setUsernameExists(false);
+      return;
+    }
+
+    if (usernameCheckTimeout.current) {
+      clearTimeout(usernameCheckTimeout.current);
+    }
+    
+    usernameCheckTimeout.current = setTimeout(() => {
       axios.post('/check-username', { username })
         .then(response => {
-          setUsernameExists(response.data.exists);
+          const exists = response.data.exists;
+          setUsernameExists(exists);
+          
+          if (exists) {
+            usernameToastId.current = toast.error("Username already exists.", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false, 
+              closeOnClick: true,
+              closeButton: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              className: 'username-exists-toast'
+            });
+          }
         })
         .catch(error => {
           console.error("Error checking username:", error);
         });
-    }
+    }, 500); // Debounce for 500ms
+    
+    // Cleanup function
+    return () => {
+      if (usernameCheckTimeout.current) {
+        clearTimeout(usernameCheckTimeout.current);
+      }
+    };
   }, [username]);
-
-  const onSubmit = async (data) => {
-    if (usernameExists) {
-      alert("Username already exists.");
-      return;
-    }
   
-    // Set merged form data first
-    setFormData(prev => ({ ...prev, ...data }));
-  
+  const finalSubmit = async (data) => {
     const payload = {
       first_name: formData.firstName,
       last_name: formData.lastName,
@@ -66,19 +108,76 @@ export default function PhaseThree({ onNext, onBack }) {
       username: data.username,
       password: data.password,
     };
-  
+
     try {
+      setIsRegistering(true);
       const res = await axios.post('/register', payload);
-      if (res.data.success) {
-        console.log(res);
+      toast.success("Account created successfully!", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        closeButton: false,
+        progress: undefined,
+      });
+      setTimeout(() => {
+        setIsRegistering(false);
         onNext();
-      }
+      }, 1500);
     } catch (err) {
+      setIsRegistering(false);
+      toast.error("Something went wrong during registration.", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        closeButton: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error("Registration error:", err.response?.data || err.message);
     }
   };
-  
-  
+
+  const onFormSubmit = (data) => {
+    if (usernameExists) {
+      usernameToastId.current = toast.error("Username already exists.", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        closeButton: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: 'username-exists-toast'
+      });
+      return;
+    }
+    setFormData(prev => ({ ...prev, ...data }));
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmYes = () => {
+    setShowConfirmDialog(false);
+    finalSubmit(watch());
+  };
+
+  const handleConfirmNo = () => {
+    setShowConfirmDialog(false);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   const hasLowerCase = /[a-z]/.test(password);
   const hasUpperCase = /[A-Z]/.test(password);
   const hasNumbers = /\d/.test(password);
@@ -86,7 +185,21 @@ export default function PhaseThree({ onNext, onBack }) {
   const isLongEnough = password.length >= 8;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="form phase-three">
+    <form onSubmit={handleSubmit(onFormSubmit)} className="form phase-three">
+      <ToastContainer
+        position="bottom-left"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        closeButton= {false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"  // Using dark theme for better contrast
+      />
+
       <div className="relative w-full">
         <input 
           placeholder="Username" 
@@ -100,23 +213,18 @@ export default function PhaseThree({ onNext, onBack }) {
         {errors.username && (
           <p className="error-message">{errors.username.message}</p>
         )}
-        {usernameExists && (
-          <p className="error-message">Username already exists.</p>
-        )}
       </div>
 
       <div className="relative w-full">
-        <div className="relative">
-          <input 
-            placeholder="Password" 
-            type={showPassword ? "text" : "password"} 
-            {...register('password', { 
-              required: 'Password is required',
-              minLength: { value: 8, message: 'Password must be at least 8 characters' }
-            })}
-            className={errors.password ? 'error' : ''}
-          />
-        </div>
+        <input 
+          placeholder="Password" 
+          type={showPassword ? "text" : "password"} 
+          {...register('password', { 
+            required: 'Password is required',
+            minLength: { value: 8, message: 'Password must be at least 8 characters' }
+          })}
+          className={errors.password ? 'error' : ''}
+        />
         {errors.password && (
           <p className="error-message">{errors.password.message}</p>
         )}
@@ -146,7 +254,7 @@ export default function PhaseThree({ onNext, onBack }) {
             One special character
           </li>
         </ul>
-        
+
         {password && (
           <div className="password-strength">
             <div className={`strength-bar ${passwordStrength}`}></div>
@@ -155,17 +263,15 @@ export default function PhaseThree({ onNext, onBack }) {
       </div>
 
       <div className="relative w-full">
-        <div className="relative">
-          <input 
-            placeholder="Confirm Password" 
-            type={showConfirmPassword ? "text" : "password"} 
-            {...register('confirmPassword', { 
-              required: 'Please confirm your password',
-              validate: value => value === password || "Passwords do not match"
-            })}
-            className={errors.confirmPassword ? 'error' : ''}
-          />
-        </div>
+        <input 
+          placeholder="Confirm Password" 
+          type={showConfirmPassword ? "text" : "password"} 
+          {...register('confirmPassword', { 
+            required: 'Please confirm your password',
+            validate: value => value === password || "Passwords do not match"
+          })}
+          className={errors.confirmPassword ? 'error' : ''}
+        />
         {errors.confirmPassword && (
           <p className="error-message">{errors.confirmPassword.message}</p>
         )}
@@ -192,11 +298,47 @@ export default function PhaseThree({ onNext, onBack }) {
           className="flex-1"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          disabled={!isLongEnough || !hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecial || password !== confirmPassword || usernameExists}
+          disabled={
+            !isLongEnough ||
+            !hasUpperCase ||
+            !hasLowerCase ||
+            !hasNumbers ||
+            !hasSpecial ||
+            password !== confirmPassword ||
+            usernameExists
+          }
         >
-          Continue
+          Register
         </motion.button>
       </div>
+
+      {isRegistering && (
+        <motion.div
+          className="registering-modal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+        </motion.div>
+      )}
+
+      {showConfirmDialog && (
+        <motion.div
+          className="confirm-dialog"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="dialog-box">
+            <h3>Confirm Registration</h3>
+            <p>Are you sure you want to create this account?</p>
+            <div className="dialog-actions">
+              <button onClick={handleConfirmNo} className="btn-secondary">No</button>
+              <button onClick={handleConfirmYes} className="btn-primary">Yes</button>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </form>
   );
 }
