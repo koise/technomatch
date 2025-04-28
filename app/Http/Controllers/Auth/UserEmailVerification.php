@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class EmailVerificationController extends Controller
+class UserEmailVerification extends Controller
 {
     protected $mailService;
 

@@ -41,7 +41,6 @@ const Signup = () => {
     exit: { opacity: 0, y: -20 }
   };
 
-  // 🧠 Dynamic header logic
   const getHeaderTitle = () => {
     switch (step) {
       case 0:

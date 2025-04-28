@@ -1,23 +1,4 @@
-  // Define light and dark theme variables scoped to header
-  :root {
-      --header-bg: #fffffa;
-      --header-text: #000103;
-      --primary-color: #ff4d4f;     
-      --primary-dark: #d9363e;      
-      --primary-outline: #ffa39e;   
-      --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
-      --border-radius: 8px;
-    }
-    
-    .dark {
-      --header-bg: #000103;
-      --header-text: #fffffa;
-      --primary-color: #ff312e;
-      --primary-dark: #ff1a17;
-      --primary-outline: #ff7875;
-      --shadow-lg: 0 4px 12px rgba(255, 255, 255, 0.1);
-    }
-    
+
     
     .technomatch-header {
       background-color: var(--header-bg);

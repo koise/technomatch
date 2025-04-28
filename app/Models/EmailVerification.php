@@ -22,17 +22,15 @@ class EmailVerification extends Model
         'updated_at',
     ];
 
-    // Define the relationships (optional)
+ 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Define the timestamps if you don't want to use the default ones (optional)
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    // Define the cast for some attributes (optional)
     protected $casts = [
         'sent_at' => 'datetime',
         'verified_at' => 'datetime',

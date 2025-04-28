@@ -76,7 +76,7 @@
             <p>If you didn't request this email, you can safely ignore it.</p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Your Company Name. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} TechnoMatch. All rights reserved.</p>
             <p>This is an automated email. Please do not reply.</p>
         </div>
     </div>

@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { useSignup } from '@/context/SignupContext';
 import { Mail, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import '../../../../scss/Components/Partials/modalAndToast.scss';
+import axios from 'axios';
 
 export default function PhaseTwo({ onNext, onBack }) {
   const {
@@ -15,8 +18,8 @@ export default function PhaseTwo({ onNext, onBack }) {
   const [emailSent, setEmailSent] = useState(false);
   const [resending, setResending] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  // Countdown logic
   useEffect(() => {
     let interval;
     if (countdown > 0) {
@@ -34,26 +37,122 @@ export default function PhaseTwo({ onNext, onBack }) {
     return () => clearInterval(interval);
   }, [countdown]);
 
-  const handleSendEmail = () => {
-    setEmailSent(true);
-    setResending(true);
-    setCountdown(30); 
-  };
-
-  const handleResendEmail = () => {
-    if (countdown === 0) {
+  const handleSendEmail = async () => {
+    try {
       setResending(true);
-      setCountdown(30); 
+      
+      const response = await axios.post('/send-verification-code', { 
+        email: formData.email 
+      });
+      
+      if (response.data.sent) {
+        setEmailSent(true);
+        setCountdown(30);
+        toast.success('Verification code sent successfully!', {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          closeButton: false,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error sending verification code:', error);
+      let errorMessage = 'Failed to send verification code.';
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      toast.error(errorMessage, {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        closeButton: false,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      setResending(false);
     }
   };
 
-  const onSubmit = (data) => {
-    console.log('Verifying code with data:', data);
-    onNext();
+  const handleResendEmail = async () => {
+    if (countdown === 0) {
+      await handleSendEmail();
+    }
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      setIsVerifying(true);
+      
+      const response = await axios.post('/verify-code', {
+        email: formData.email,
+        code: data.verificationCode
+      });
+      
+      if (response.data.verified) {
+        toast.success('Email verified successfully!', {
+          position: "bottom-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          closeButton: false,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        
+        setFormData(prev => ({ 
+          ...prev, 
+          emailVerified: true,
+          verificationCode: data.verificationCode
+        }));
+        
+        setTimeout(() => {
+          onNext();
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error verifying code:', error);
+      let errorMessage = 'Failed to verify code.';
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      toast.error(errorMessage, {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        closeButton: false,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form phase-two">
+      <ToastContainer
+        position="bottom-left"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        closeButton={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+
       <div className="verification-info mb-4 text-sm text-gray-600">
         <p>
           We've sent a verification code to <strong>{formData.email}</strong>.
@@ -61,7 +160,6 @@ export default function PhaseTwo({ onNext, onBack }) {
         <p>Please check your inbox and enter the code below to continue.</p>
       </div>
 
-      {/* Email Field */}
       <div className="relative w-full mt-4">
         <input
           placeholder="Email"
@@ -85,7 +183,6 @@ export default function PhaseTwo({ onNext, onBack }) {
         )}
       </div>
 
-
       {/* Verification Code Field */}
       {emailSent && (
         <div className="relative w-full mt-4">
@@ -96,6 +193,14 @@ export default function PhaseTwo({ onNext, onBack }) {
               minLength: {
                 value: 6,
                 message: 'Code must be 6 characters',
+              },
+              maxLength: {
+                value: 6,
+                message: 'Code must be 6 characters',
+              },
+              pattern: {
+                value: /^[0-9]{6}$/,
+                message: 'Code must contain 6 digits',
               },
             })}
             className={`input-field ${errors.verificationCode ? 'input-error' : ''}`}
@@ -108,7 +213,6 @@ export default function PhaseTwo({ onNext, onBack }) {
         </div>
       )}
 
-      {/* Email Buttons */}
       <div className="email-actions mt-6 space-y-2 text-sm">
         {!emailSent && (
           <motion.button
@@ -135,55 +239,54 @@ export default function PhaseTwo({ onNext, onBack }) {
 
         {emailSent && (
           <>
-          <p
-            style={{
-              fontSize: '0.875rem',
-              color: '#666',
-              textAlign: 'center',
-              marginTop: '1.5rem',
-              lineHeight: '1.6',
-            }}
-          >
-            Don’t see the email? Check your spam folder or{' '}
-            <motion.button
-              type="button"
-              onClick={handleResendEmail}
-              disabled={countdown > 0}
-              whileHover={{ scale: countdown > 0 ? 1 : 1.05 }}
-              whileTap={{ scale: countdown > 0 ? 1 : 0.95 }}
-              className={`resend-btn inline-block ml-1 px-3 py-1.5 rounded-md transition-all font-medium text-sm ${
-                countdown > 0
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-primary text-white hover:bg-primary-dark'
-              }`}
-              style={{
-                pointerEvents: countdown > 0 ? 'none' : 'auto',
-                opacity: countdown > 0 ? 0.6 : 1,
-                backgroundColor: countdown > 0 ? '#515052' : '#ff312e', // Tailwind gray-200 / blue-600
-                color: countdown > 0 ? '#6b7280' : '#fff', // Tailwind gray-500 / white
-              }}
-            >
-              {resending ? (
-                <>
-                  <RefreshCw size={14} className="inline-block mr-1 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                'Send Email'
-              )}
-            </motion.button>
-          </p>
-
-
-            {countdown > 0 && (
-              <p className="text-xs text-gray-500 mt-1"
+            <p
               style={{
                 fontSize: '0.875rem',
                 color: '#666',
                 textAlign: 'center',
                 marginTop: '1.5rem',
                 lineHeight: '1.6',
-              }}>
+              }}
+            >
+              Don't see the email? Check your spam folder or{' '}
+              <motion.button
+                type="button"
+                onClick={handleResendEmail}
+                disabled={countdown > 0}
+                whileHover={{ scale: countdown > 0 ? 1 : 1.05 }}
+                whileTap={{ scale: countdown > 0 ? 1 : 0.95 }}
+                className={`resend-btn inline-block ml-1 px-3 py-1.5 rounded-md transition-all font-medium text-sm ${
+                  countdown > 0
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-primary text-white hover:bg-primary-dark'
+                }`}
+                style={{
+                  pointerEvents: countdown > 0 ? 'none' : 'auto',
+                  opacity: countdown > 0 ? 0.6 : 1,
+                  backgroundColor: countdown > 0 ? '#515052' : '#ff312e', 
+                  color: countdown > 0 ? '#6b7280' : '#fff',
+                }}
+              >
+                {resending ? (
+                  <>
+                    <RefreshCw size={14} className="inline-block mr-1 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send Email'
+                )}
+              </motion.button>
+            </p>
+
+            {countdown > 0 && (
+              <p className="text-xs text-gray-500 mt-1"
+                style={{
+                  fontSize: '0.875rem',
+                  color: '#666',
+                  textAlign: 'center',
+                  marginTop: '1.5rem',
+                  lineHeight: '1.6',
+                }}>
                 Please wait <strong>{countdown}</strong> second{countdown !== 1 && 's'} to resend.
               </p>
             )}
@@ -193,23 +296,22 @@ export default function PhaseTwo({ onNext, onBack }) {
 
       {/* Navigation Buttons */}
       <div className="flex gap-4 mt-8">
-        <motion.button
-          type="button"
-          className="btn-back"
-          onClick={onBack}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <ArrowLeft size={16} className="mr-2" /> Back
-        </motion.button>
 
         <motion.button
           type="submit"
           className="btn-submit"
+          disabled={!emailSent || isVerifying}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          Verify & Continue
+          {isVerifying ? (
+            <>
+              <RefreshCw size={16} className="inline-block mr-1 animate-spin" />
+              Verifying...
+            </>
+          ) : (
+            'Verify & Continue'
+          )}
         </motion.button>
       </div>
     </form>

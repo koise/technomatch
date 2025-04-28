@@ -40,7 +40,13 @@ export default function Login() {
       });
       
       if (response.status === 200) {
-        Inertia.visit('/dashboard');
+        const user = response.data.user;
+      
+        if (user.email_verified) {
+          Inertia.visit('/dashboard');
+        } else {
+          Inertia.visit('/verify', { data: { email: user.email } });
+        }
       }
     } catch (error) {
       console.log('Login Error:', error);

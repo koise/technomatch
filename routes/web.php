@@ -4,37 +4,40 @@ use Inertia\Inertia;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestMailTestController;
-
-
-use App\Http\Controllers\Auth\UserLoginController;
+use App\Http\Controllers\Auth\UserAccountController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\UserEmailVerification;
+
 
 
 
 Route::get('/', function () { return Inertia::render('Home');});
 
+
+
+//ASSETS
 Route::get('/avatar/{filename}', fn($filename) => file_exists($path = public_path("images/UserDefaultProfile/$filename")) ? response()->file($path) : abort(404));
 
+//INTERTIA
+Route::get('/dashboard', function () { return Inertia::render('Users/Dashboard');});
+Route::get('/code-arena', function () { return Inertia::render('Users/CodeArena'); });
 Route::get('/competitive-editor', function () { return Inertia::render('Users/CompetitiveCodingPage');})->name('competitive.editor');
 Route::get('/code-arena', function () {return Inertia::render('Users/CodeArena');});
 Route::get('/users/editor', function () { return Inertia::render('Users/');});
 Route::get('/login', function () { return Inertia::render('Auth/Login');});
 Route::get('/signup', function () { return Inertia::render('Auth/Signup');});
-Route::post('/login', [UserLoginController::class, 'login'])->name('login');
+Route::get('/verify', function () { return Inertia::render('Auth/VerifyUser');});
 
-Route::get('/dashboard', function () { return Inertia::render('Users/Dashboard');});
-Route::get('/code-arena', function () { return Inertia::render('Users/CodeArena'); });
+//ACCOUNT CONTROLLER
+Route::post('/check-username', [UserAccountController::class, 'checkUsernameExist']);
+Route::post('/login', [UserAccountController::class, 'login'])->name('login');
+Route::post('/register', [UserAccountController::class, 'store']);
+Route::post('/check-email', [UserAccountController::class, 'checkEmail']);
+Route::get('/logout', [UserAccountController::class, 'logout'])->name('logout');
+Route::get('/fetch-user', [UserAccountController::class, 'fetchUser'])->name('fetchUser');
 
 
-
-Route::post('/check-username', [UserLoginController::class, 'checkUsernameExist']);
-Route::post('/login', [UserLoginController::class, 'login'])->name('login');
-Route::post('/register', [UserLoginController::class, 'store']);
-
-
-Route::prefix('email-verification')->group(function () {
-    Route::post('/send', [EmailVerificationPromptController::class, 'sendVerificationEmail']);
-    Route::post('/verify', [EmailVerificationPromptController::class, 'verifyCode']);
-    Route::post('/resend', [EmailVerificationPromptController::class, 'resendVerificationEmail']);
-    Route::post('/status', [EmailVerificationPromptController::class, 'checkVerificationStatus']);
-});
+//EMAIL
+Route::get('/send-mail', [EmailVerificationPromptController::class, 'send']);
+Route::post('/send-verification-code', [UserEmailVerification::class, 'sendVerificationCode']);
+Route::post('/verify-code', [UserEmailVerification::class, 'verifyCode']);

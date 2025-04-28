@@ -8,8 +8,41 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
-class UserLoginController extends Controller
-{
+class UserAccountController extends Controller
+{   
+
+    public function creatingProfiles(Request $request)
+    {
+
+    }
+
+    public function fetchUser(Request $request)
+    {
+        $userId = $request->query('user_id', session('user_id'));
+    
+        $user = User::find($userId);
+    
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found.',
+            ], 404);
+        }
+    
+        return response()->json([
+            'user' => $user,
+        ]);
+    }
+    
+
+    public function logout(Request $request)
+    {
+        $request->session()->flush();
+        Auth::logout();
+
+        return redirect('/login');
+    }
+
+
     public function login(Request $request)
     {
         $request->validate([
@@ -28,7 +61,6 @@ class UserLoginController extends Controller
         }
     
         if ($user && Hash::check($request->input('password'), $user->password)) {
-            // Store user ID in session
             session(['user_id' => $user->id]);
     
             return response()->json([
@@ -42,6 +74,29 @@ class UserLoginController extends Controller
             'message' => 'Invalid credentials',
         ], 401);
     }
+
+    public function checkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+    
+        $email = $request->input('email');
+        $user = User::where('email', $email)->first();
+    
+        if ($user) {
+            return response()->json([
+                'message' => 'Email exists.',
+                'exists' => true,
+            ]);
+        }
+    
+        return response()->json([
+            'message' => 'Email does not exist.',
+            'exists' => false,
+        ]);
+    }
+
 
     public function checkUsernameExist(Request $request)
     {
@@ -71,6 +126,8 @@ class UserLoginController extends Controller
             'first_name' => 'required|string|max:100',
             'last_name'  => 'required|string|max:100',
             'role'       => 'nullable|string|max:50',
+            'gender'     => 'required|string|max:50',
+            'email'      => 'required|string|max:50|unique:users,email',
             'username'   => 'required|string|max:50|unique:users,username',
             'password'   => 'required|string|min:8',
         ]);
@@ -79,6 +136,8 @@ class UserLoginController extends Controller
             'first_name' => $validated['first_name'],
             'last_name'  => $validated['last_name'],
             'role'       => $validated['role'] ?? 'Student',
+            'gender'       => $validated['gender'] ?? 'Others',
+            'email'      => $validated['email'],
             'username'   => $validated['username'],
             'password'   => Hash::make($validated['password']),
         ]);

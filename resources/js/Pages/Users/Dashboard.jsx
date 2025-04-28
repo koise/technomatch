@@ -1,5 +1,5 @@
 import React from 'react';
-import Headerlogged from '@/Components/Partials/HeaderUnverified';
+import Headerlogged from '@/Components/Partials/HeaderLogged';
 import { ThemeProvider } from '@/context/ThemeContext';
 
 const Dashboard = () => {
@@ -11,5 +11,4 @@ const Dashboard = () => {
     </div>
   );
 };
-
 export default Dashboard;

@@ -4,8 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSignup } from '@/context/SignupContext';
 import { User, Lock, Eye, EyeOff, ArrowLeft, Check, X } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import '../../../../scss/Components/Auth/Signup/modalAndToast.scss';
+import '../../../../scss/Components/Partials/modalAndToast.scss';
 import axios from 'axios';
 
 export default function PhaseThree({ onNext, onBack }) {
@@ -71,6 +70,7 @@ export default function PhaseThree({ onNext, onBack }) {
       axios.post('/check-username', { username })
         .then(response => {
           const exists = response.data.exists;
+          console.log(exists);
           setUsernameExists(exists);
           
           if (exists) {
@@ -90,9 +90,8 @@ export default function PhaseThree({ onNext, onBack }) {
         .catch(error => {
           console.error("Error checking username:", error);
         });
-    }, 500); // Debounce for 500ms
+    }, 500); 
     
-    // Cleanup function
     return () => {
       if (usernameCheckTimeout.current) {
         clearTimeout(usernameCheckTimeout.current);
@@ -105,6 +104,8 @@ export default function PhaseThree({ onNext, onBack }) {
       first_name: formData.firstName,
       last_name: formData.lastName,
       role: formData.role || 'Student',
+      gender: formData.gender || '',
+      email: formData.email,
       username: data.username,
       password: data.password,
     };
@@ -197,7 +198,7 @@ export default function PhaseThree({ onNext, onBack }) {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"  // Using dark theme for better contrast
+        theme="dark" 
       />
 
       <div className="relative w-full">
