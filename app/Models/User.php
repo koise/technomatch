@@ -40,13 +40,11 @@ class User extends Authenticatable
         'updated_at' => 'datetime',
     ];
 
-    // Example relationship to DisplayTitle (if there's a display_titles table)
     public function displayTitle()
     {
         return $this->belongsTo(DisplayTitle::class, 'display_title_id');
     }
 
-    // Example relationship to ActiveContest (if using a contests table)
     public function activeContest()
     {
         return $this->belongsTo(Contest::class, 'active_contest_key_id');

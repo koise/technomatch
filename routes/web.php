@@ -35,7 +35,7 @@ Route::post('/register', [UserAccountController::class, 'store']);
 Route::post('/check-email', [UserAccountController::class, 'checkEmail']);
 Route::get('/logout', [UserAccountController::class, 'logout'])->name('logout');
 Route::get('/fetch-user', [UserAccountController::class, 'fetchUser'])->name('fetchUser');
-
+Route::post('/user/profile', [UserAccountController::class, 'creatingProfiles']);
 
 //EMAIL
 Route::get('/send-mail', [EmailVerificationPromptController::class, 'send']);
