@@ -13,6 +13,11 @@ export default function FinalPhase({ onBack }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(formData.avatar || 'default-1.svg');
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    Array.isArray(formData.language) && formData.language.length > 0 
+      ? formData.language[0] 
+      : formData.language || ''
+  );
 
   const avatarOptions = [
     'default-1.svg',
@@ -29,30 +34,22 @@ export default function FinalPhase({ onBack }) {
     'default-12.svg',
   ];
 
+  const handleLanguageChange = (e) => {
+    setSelectedLanguage(e.target.value);
+  };
+
   const onSubmit = async (data) => {
     setSubmitting(true);
     
-    // Ensure language is an array
-    if (data.language && !Array.isArray(data.language)) {
-      data.language = [data.language];
-    }
-  
     // Prepare the final payload with proper field naming to match the Laravel controller
+    // Send language as a simple string, not an array
     const finalPayload = { 
       email: formData.email,
-      firstName: formData.firstName || formData.first_name,
-      lastName: formData.lastName || formData.last_name,
-      role: formData.role || 'Student',
-      username: formData.username || '',
-      password: formData.password,
-      confirmPassword: formData.confirmPassword || formData.password,
-      language: data.language || [],
+      language: selectedLanguage, 
       school: data.school || '',
       bio: data.bio || '',
       avatar: selectedAvatar,
       gender: formData.gender || '',
-      emailVerified: formData.emailVerified ? 1 : 0,
-      verificationCode: formData.verificationCode || ''
     };
   
     setFormData(finalPayload);
@@ -257,12 +254,13 @@ export default function FinalPhase({ onBack }) {
         </div>
       </div>
 
-      <label>Preferred Programming Languages (Optional)</label>
+      <label>Preferred Programming Language (Optional)</label>
       <select 
-        {...register('language')}
-        multiple
-        defaultValue={formData.language || []}
+        value={selectedLanguage}
+        onChange={handleLanguageChange}
+        className="language-select"
       >
+        <option value="">Select a language</option>
         <option value="Java">Java</option>
         <option value="C">C Language</option>
         <option value="Python">Python</option>

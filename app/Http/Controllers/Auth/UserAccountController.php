@@ -19,19 +19,10 @@ class UserAccountController extends Controller
         try {
             $validated = $request->validate([
                 'email'             => 'required|email', 
-                'firstName'         => 'required|string|max:255',
-                'lastName'          => 'required|string|max:255',
-                'role'              => 'nullable|string|max:255',
-                'username'          => 'nullable|string|max:255',
-                'password'          => 'required|string|min:8',
-                'confirmPassword'   => 'required|same:password',
-                'language'          => 'nullable|array',
+                'language'          => 'nullable|string|max:255',
                 'school'            => 'nullable|string|max:255',
                 'bio'               => 'nullable|string',
                 'avatar'            => 'nullable|string',
-                'gender'            => 'nullable|string',
-                'emailVerified'     => 'nullable|boolean',
-                'verificationCode'  => 'nullable|string',
             ]);
     
             // Find or create the user
@@ -42,21 +33,12 @@ class UserAccountController extends Controller
                 $user->email = $validated['email'];
             }
             
-            // Update all other fields
-            $user->first_name = $validated['firstName'];
-            $user->last_name = $validated['lastName'];
-            $user->role = $validated['role'] ?? 'Student';
-            $user->username = $validated['username'] ?? null;
-            $user->password = bcrypt($validated['password']);
-            $user->email_verified = (bool)($validated['emailVerified'] ?? false);
-            $user->programming_language = isset($validated['language']) ? json_encode($validated['language']) : null;
+            $user->programming_language = $validated['language'] ?? null;
             $user->school = $validated['school'] ?? null;
             $user->bio = $validated['bio'] ?? null;
-            
-            // Save the user
             $user->save();
+            $user->status = 'active';
     
-            // Create or update user profile
             $userProfile = UserProfile::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -80,8 +62,8 @@ class UserAccountController extends Controller
                     'completed_challenges'=> 0,
                 ]
             );
-
-            $rankedStat = UserRankedStat::updateOrCreate(
+    
+            $rankedStat = UserRankStat::updateOrCreate(
                 ['user_id' => $user->id],
                 [
                     'tier'       => 'Calibrating',
@@ -94,19 +76,6 @@ class UserAccountController extends Controller
                     'win_streak' => 0,
                 ]
             );
-    
-            // Save preferred languages
-            if (!empty($validated['language'])) {
-                UserLanguage::where('user_id', $user->id)->delete();
-                foreach ($validated['language'] as $lang) {
-                    if (!empty($lang)) {
-                        UserLanguage::create([
-                            'user_id'  => $user->id,
-                            'language' => $lang
-                        ]);
-                    }
-                }
-            }
     
             return response()->json([
                 'message' => 'User and profile created/updated successfully!',
