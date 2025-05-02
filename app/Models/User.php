@@ -49,4 +49,20 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Contest::class, 'active_contest_key_id');
     }
+
+    public function userProfile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function userRankStat()
+    {
+        return $this->hasOne(UserRankStat::class);
+    }
+
+    public function userProgressiveStat()
+    {
+        return $this->hasOne(UserProgressiveStat::class);
+    }
+
 }

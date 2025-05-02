@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\UserAccountController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\UserEmailVerification;
 
+use App\Http\Controllers\User\UserStatsController;
 
 
 
@@ -34,8 +35,12 @@ Route::post('/login', [UserAccountController::class, 'login'])->name('login');
 Route::post('/register', [UserAccountController::class, 'store']);
 Route::post('/check-email', [UserAccountController::class, 'checkEmail']);
 Route::get('/logout', [UserAccountController::class, 'logout'])->name('logout');
-Route::get('/fetch-user', [UserAccountController::class, 'fetchUser'])->name('fetchUser');
 Route::post('/user/profile', [UserAccountController::class, 'creatingProfiles']);
+
+//USER ACCOUNT PREFERENCE
+Route::get('/fetch-user', [UserStatsController::class, 'fetchUser'])->name('fetchUser');
+Route::post('/update-user-status', [UserStatsController::class, 'updateUserStatus']);
+Route::post('/update-user-preference', [UserStatsController::class, 'updateUserPreference']);
 
 //EMAIL
 Route::get('/send-mail', [EmailVerificationPromptController::class, 'send']);

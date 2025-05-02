@@ -100,24 +100,6 @@ class UserAccountController extends Controller
         }
     }
     
-    public function fetchUser(Request $request)
-    {
-        $userId = $request->query('user_id', session('user_id'));
-    
-        $user = User::find($userId);
-    
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found.',
-            ], 404);
-        }
-    
-        return response()->json([
-            'user' => $user,
-        ]);
-    }
-    
-
     public function logout(Request $request)
     {
         $request->session()->flush();
