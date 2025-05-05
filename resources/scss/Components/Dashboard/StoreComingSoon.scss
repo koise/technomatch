@@ -1,0 +1,209 @@
+// StoreComingSoon.scss
+// Using the CSS variables from your design system
+
+.store-container {
+    padding: var(--spacing-6);
+    border-radius: var(--border-radius-xl);
+    background-color: var(--bg-dark);
+    box-shadow: var(--shadow-lg);
+    margin-top: var(--spacing-6);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .store-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-6);
+  
+    .store-title {
+      font-size: var(--text-2xl);
+      font-weight: bold;
+      color: var(--text-light);
+      margin: 0;
+    }
+  
+    .badge {
+      background-color: var(--primary-color);
+      color: white;
+      padding: var(--spacing-1) var(--spacing-3);
+      font-size: var(--text-sm);
+      border-radius: var(--border-radius-full);
+      font-weight: 500;
+    }
+  }
+  
+  .items-row {
+    display: flex;
+    gap: var(--spacing-4);
+    overflow-x: auto;
+    padding-bottom: var(--spacing-4);
+    scroll-snap-type: x mandatory;
+    
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: var(--neutral-outline);
+      border-radius: var(--border-radius-full);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: var(--border-radius-full);
+    }
+  }
+  
+  .item-card {
+    flex-shrink: 0;
+    width: 260px;
+    scroll-snap-align: start;
+    animation: fadeSlideIn 0.5s ease forwards;
+    opacity: 0;
+    
+    .card-content {
+      height: 100%;
+      background-color: var(--bg-light);
+      padding: var(--spacing-5);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--feature-border);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    &.hovered {
+      z-index: var(--z-10);
+      
+      .card-content {
+        box-shadow: var(--shadow-lg);
+      }
+      
+      .coming-soon-btn {
+        background-color: var(--primary-color);
+        color: white;
+      }
+    }
+  }
+  
+  .item-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+    
+    .icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: var(--primary-light-color);
+      border-radius: var(--border-radius);
+      margin-right: var(--spacing-3);
+    }
+    
+    .item-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--primary-color);
+    }
+    
+    .item-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-light);
+      margin: 0;
+    }
+  }
+  
+  .item-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--spacing-4) 0;
+    flex-grow: 1;
+    
+    .item-entry {
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--spacing-2);
+      color: var(--text-muted);
+      
+      .dot {
+        width: 4px;
+        height: 4px;
+        background-color: var(--neutral-color);
+        border-radius: 50%;
+        margin-right: var(--spacing-2);
+      }
+    }
+  }
+  
+  .card-footer {
+    margin-top: var(--spacing-4);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--feature-border);
+    
+    .coming-soon-btn {
+      width: 100%;
+      padding: var(--spacing-2) 0;
+      background-color: var(--neutral-outline);
+      color: var(--text-light);
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      
+      &:hover {
+        background-color: var(--primary-color);
+        color: var(--text-light);
+      }
+    }
+  }
+  
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .store-container {
+      padding: var(--spacing-4);
+    }
+    
+    .items-row {
+      gap: var(--spacing-3);
+    }
+    
+    .item-card {
+      width: 220px;
+    }
+  }
+  
+  // Dark mode specific overrides
+  .dark {
+    .store-container {
+      background-color: var(--bg-darker);
+    }
+    
+    .card-content {
+      background-color: var(--bg-dark);
+    }
+  }

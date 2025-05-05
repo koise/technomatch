@@ -1,0 +1,194 @@
+.problem-banks {
+  padding: var(--spacing-6);
+  border-radius: var(--border-radius-xl);
+  background-color: var(--bg-light);
+  box-shadow: var(--shadow-lg);
+  margin-top: var(--spacing-6);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  height: 300px; // Add fixed height to enable scrolling
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+  }
+
+  &__title {
+    font-size: var(--text-xl);
+    font-weight: bold;
+    color: var(--text-light);
+    margin: 0;
+  }
+
+  &__filter-container {
+    position: relative;
+    min-width: 180px;
+  }
+
+  &__dropdown {
+    width: 100%;
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--border-radius-md);
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    font-size: var(--text-sm);
+    border: 1px solid var(--leaderboard-border);
+    cursor: pointer;
+    appearance: none;
+    padding-right: var(--spacing-6);
+    
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 1px rgba(var(--primary-color-rgb), 0.2);
+    }
+  }
+
+  &__filter-container::after {
+    content: '▼';
+    position: absolute;
+    right: var(--spacing-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 0.8em;
+  }
+
+  &__list-container {
+    flex: 1;
+    overflow-y: auto;
+    border-color: 1px solid crimson;
+    overflow-x: hidden;
+    position: relative;
+    padding-right: 6px; // Add padding to avoid content touching scrollbar
+    
+    /* Webkit scrollbar styling */
+    &::-webkit-scrollbar {
+      width: 6px;
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: var(--neutral-outline);
+      border-radius: 10px;
+      margin: 4px 0;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--neutral-color);
+      border-radius: 10px;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--neutral-dark);
+    }
+    
+    /* Firefox scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--neutral-color) var(--neutral-outline);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    padding-right: 4px; // Add slight padding to ensure content doesn't touch scrollbar
+  }
+}
+
+.problem-card {
+  padding: var(--spacing-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid crimson;
+  background-color: var(--bg-dark);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--primary-light-color);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__title {
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--text-light);
+    margin-top: 0;
+    margin-bottom: var(--spacing-1);
+  }
+
+  &__description {
+    margin: var(--spacing-2) 0;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  &__difficulty {
+    font-weight: 500;
+    font-size: var(--text-xs);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--border-radius-sm);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+    &--easy {
+      color: var(--success-color);
+    }
+    
+    &--medium {
+      color: var(--warning-color);
+    }
+    
+    &--intermediate {
+      color: var(--info-color);
+    }
+    
+    &--technoclash {
+      color: var(--accent-color);
+    }
+  }
+
+  &__tags {
+    margin-top: var(--spacing-2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-1);
+  }
+
+  &__tag {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: var(--text-xs);
+    background-color: var(--feature-bg);
+    color: var(--text-muted);
+    border-radius: var(--border-radius-xs);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .problem-banks {
+    padding: var(--spacing-3);
+    height: auto;
+    max-height: 80vh;
+    
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-2);
+    }
+    
+    &__filter-container {
+      width: 100%;
+    }
+  }
+}

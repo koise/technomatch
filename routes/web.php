@@ -28,6 +28,7 @@ Route::get('/users/editor', function () { return Inertia::render('Users/');});
 Route::get('/login', function () { return Inertia::render('Auth/Login');});
 Route::get('/signup', function () { return Inertia::render('Auth/Signup');});
 Route::get('/verify', function () { return Inertia::render('Auth/VerifyUser');});
+Route::get('/progressive', function () { return Inertia::render('Users/Game/Progressive');});
 
 //ACCOUNT CONTROLLER
 Route::post('/check-username', [UserAccountController::class, 'checkUsernameExist']);
