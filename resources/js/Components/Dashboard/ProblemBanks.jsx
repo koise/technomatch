@@ -234,7 +234,7 @@ const ProblemBanks = () => {
   const [activeFilter, setActiveFilter] = useState('Easy');
   const [displayProblems, setDisplayProblems] = useState([]);
   
-  const filterOptions = ['All', 'TechnoClash', 'Easy', 'Medium', 'Intermediate', 'Hard'];
+  const filterOptions = ['All', 'Easy', 'Medium', 'Intermediate', 'Hard', 'TechnoClash'];
   
   // Update filtered problems when filter changes
   useEffect(() => {

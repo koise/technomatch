@@ -1,19 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import CodeEditor from '@/Components/CodeArenaComponents/CodeEditor';
-import OpponentEditor from '@/Components/CodeArenaComponents/OpponentEditor';
-import TestCase from '@/Components/CodeArenaComponents/TestCase';
-import Instruction from '@/Components/CodeArenaComponents/Instruction';
-import TerminalButton from '@/Components/CodeArenaComponents/TerminalButton';
-import SubmitButton from '@/Components/CodeArenaComponents/SubmitButton';
-import TerminalModal from '@/Components/CodeArenaComponents/TerminalModal';
-import SurrenderModal from '@/Components/CodeArenaComponents/SurrenderModal';
-import SettingsDropdown from '@/Components/CodeArenaComponents/SettingsDropdown';
-import ToastReminder from '@/Components/CodeArenaComponents/ToastReminder';
 import { FaPython, FaJava } from 'react-icons/fa';
 import { SiC } from 'react-icons/si';
-import '../../../../scss/Pages/CodeArena.scss';
 
-const CodeArena = () => {
+// Main component
+const Progressive = () => {
     const [language, setLanguage] = useState('Python');
     const [fontSize, setFontSize] = useState(14);
     const [fontFamily, setFontFamily] = useState('Courier New');
@@ -21,12 +11,11 @@ const CodeArena = () => {
     const [showSettings, setShowSettings] = useState(false);
     const [showTerminalModal, setShowTerminalModal] = useState(false);
     const [terminalOutput, setTerminalOutput] = useState('');
-    const [terminalTitle, setTerminalTitle] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isCompiling, setIsCompiling] = useState(false);
     const [showSurrenderModal, setShowSurrenderModal] = useState(false);
     const [isUserEditorLoading, setIsUserEditorLoading] = useState(true);
-    const [isOpponentEditorLoading, setIsOpponentEditorLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('instruction');
     const settingsRef = useRef(null);
     const surrenderModalRef = useRef(null);
 
@@ -51,10 +40,8 @@ const CodeArena = () => {
 
     useEffect(() => {
         const userTimeout = setTimeout(() => setIsUserEditorLoading(false), 1000);
-        const opponentTimeout = setTimeout(() => setIsOpponentEditorLoading(false), 1200);
         return () => {
             clearTimeout(userTimeout);
-            clearTimeout(opponentTimeout);
         };
     }, []);
 
@@ -80,29 +67,25 @@ const CodeArena = () => {
 
     const handleRunCode = () => {
         setIsCompiling(true);
-        setTerminalTitle('Running Code');
         setShowTerminalModal(true);
     
         setTimeout(() => {
             const output = "Executing code...\n\n> python solution.py\n Running test cases: \nTest Case 1: Input: 5 ✓ Passed\nOutput: 25\nExpected: 25\n\nTest Case 2: Input: -7 ✓ Passed\nOutput: 49\nExpected: 49\n\nAll tests completed successfully!";
             setTerminalOutput(output);
             setIsCompiling(false);
-        }, 2000); // Simulated delay
+        }, 2000);
     };
     
-
     const handleSubmitCode = () => {
         setIsSubmitting(true);
-        setTerminalTitle('Submitting Solution');
         setShowTerminalModal(true);
 
         setTimeout(() => {
             const output = "Validating solution...\n\nRunning all test cases:\nBasic Test Case: ✓ Passed\nNegative Numbers: ✓ Passed\nZero Input: ✓ Passed\nDecimal Numbers: ✓ Passed\n\n✅ All test cases passed!\n\nSubmitting to leaderboard...\nYour solution has been submitted successfully!";
             setTerminalOutput(output);
             setIsSubmitting(false);
-        }, 2500); // Simulated delay
+        }, 2500);
     };
-
 
     const handleSurrender = () => {
         setShowSurrenderModal(true);
@@ -119,104 +102,182 @@ const CodeArena = () => {
     };
 
     return (
-        <div className="code-arena">
-            <div className="arena-container">
-                <div className="left-section">
-                    <div className="header-bar">
-                        <div className="title">
-                            <span className="subtitle">TechnoMatch Easy Round</span>
-                        </div>
-                        <div className="timer-wrapper" ref={settingsRef}>
-                            <div className="timer" onClick={() => setShowSettings(!showSettings)}>
-                                <div className="timer-display">
-                                    <span className="timer-icon">⏱️</span>
-                                    <h2>{formatTime(timeLeft)}</h2>
-                                </div>
-                                <span className="gear-icon" title="Settings">⚙️</span>
-                            </div>
+        <div className="bg-black text-white min-h-screen">
+            {/* Header Bar */}
+            <header className="bg-gray-900 p-4 flex justify-between items-center border-b border-gray-800">
+                <button className="text-red-500 font-bold">back</button>
+                <div className="flex space-x-4">
+                    <span className="text-red-500">xp</span>
+                    <button className="text-red-500">settings</button>
+                </div>
+            </header>
 
-                            <SettingsDropdown
-                                showSettings={showSettings}
-                                setShowSettings={setShowSettings}
-                                language={language}
-                                setLanguage={setLanguage}
-                                fontSize={fontSize}
-                                setFontSize={setFontSize}
-                                fontFamily={fontFamily}
-                                setFontFamily={setFontFamily}
-                                settingsRef={settingsRef}
-                                handleSurrender={handleSurrender}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="editor-section">
-                        <div className="editor-header">
-                            <h2>User's Code</h2>
-                            <div className="language-badge">
-                                {language === 'Python' && <FaPython size={20} />}
-                                {language === 'Java' && <FaJava size={20} />}
-                                {language === 'C' && <SiC size={20} />}
-                                <span>{language}</span>
-                            </div>
-                        </div>
+            <div className="flex h-[calc(100vh-64px)]">
+                {/* Left Section - Code Editor */}
+                <div className="w-2/3 p-4 border-r border-gray-800">
+                    <h2 className="text-center mb-2 text-gray-400">monaco editor</h2>
+                    <div className="bg-gray-900 h-full border border-gray-700 rounded-md p-2">
                         {isUserEditorLoading ? (
-                            <div className="editor-loading">
-                                <div className="spinner"></div>
-                                <p>Loading editor...</p>
+                            <div className="flex items-center justify-center h-full">
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500"></div>
+                                <p className="ml-2">Loading editor...</p>
                             </div>
                         ) : (
-                            <CodeEditor
-                                language={language}
-                                fontSize={fontSize}
-                                fontFamily={fontFamily}
-                                code={code}
-                                onChange={(newCode) => setCode(newCode)}
-                            />
+                            <pre className="text-gray-300 font-mono text-sm whitespace-pre overflow-auto h-full">
+                                {code}
+                            </pre>
                         )}
                     </div>
                 </div>
 
-                <div className="right-section">
-                    <div className="section-container opponents-editor">
-                        <h2>Opponent's Code</h2>
-                        {isOpponentEditorLoading ? (
-                            <div className="editor-loading">
-                                <div className="spinner"></div>
-                                <p>Fetching opponent code...</p>
+                {/* Right Section - Problem Bank & Controls */}
+                <div className="w-1/3 flex flex-col">
+                    {/* Problem Bank Header */}
+                    <div className="p-4 border-b border-gray-800">
+                        <h2 className="text-2xl font-bold text-center">problem bank</h2>
+                    </div>
+
+                    {/* Tab Navigation */}
+                    <div className="flex border-b border-gray-800">
+                        <button 
+                            className={`px-4 py-2 ${activeTab === 'instruction' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400'}`}
+                            onClick={() => setActiveTab('instruction')}
+                        >
+                            instruction
+                        </button>
+                        <button 
+                            className={`px-4 py-2 ${activeTab === 'testCase' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400'}`}
+                            onClick={() => setActiveTab('testCase')}
+                        >
+                            test case
+                        </button>
+                        <button 
+                            className={`px-4 py-2 ${activeTab === 'yourOutput' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400'}`}
+                            onClick={() => setActiveTab('yourOutput')}
+                        >
+                            your output
+                        </button>
+                    </div>
+
+                    {/* Tab Content */}
+                    <div className="flex-grow overflow-auto p-4">
+                        {activeTab === 'instruction' && (
+                            <div>
+                                <h3 className="text-xl mb-4">instructions</h3>
+                                <p className="text-gray-300 mb-2">Write the code to solve the problem.</p>
+                                <p className="text-gray-300">Use the test cases to verify your solution.</p>
                             </div>
-                        ) : (
-                            <OpponentEditor language={language} fontSize={fontSize} fontFamily={fontFamily} />
+                        )}
+                        {activeTab === 'testCase' && (
+                            <div>
+                                <h3 className="text-lg font-semibold mb-2">Test Cases:</h3>
+                                <div className="bg-gray-800 p-3 rounded mb-3">
+                                    <p className="text-sm text-gray-300">Test case 1: Test description here.</p>
+                                </div>
+                                <div className="bg-gray-800 p-3 rounded">
+                                    <p className="text-sm text-gray-300">Test case 2: Test description here.</p>
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === 'yourOutput' && (
+                            <div>
+                                <h3 className="text-lg font-semibold mb-2">Output:</h3>
+                                <pre className="bg-gray-800 p-3 rounded text-sm text-gray-300 font-mono">
+                                    {terminalOutput || "Run your code to see output here."}
+                                </pre>
+                            </div>
                         )}
                     </div>
-                    <div className="section-container instructions-container">
-                        <h2>Challenge Instructions</h2>
-                        <Instruction />
-                    </div>
-                    <div className="section-container button-containers">
-                        <TestCase />
-                        <TerminalButton onClick={handleRunCode} loading={isCompiling} />
-                        <SubmitButton onClick={handleSubmitCode} isLoading={isSubmitting} />
+
+                    {/* Action Buttons */}
+                    <div className="p-4 border-t border-gray-800 flex space-x-4">
+                        <button 
+                            className="bg-white text-black font-bold py-2 px-4 rounded flex-1"
+                            onClick={handleSubmitCode}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Submitting...' : 'SUBMIT'}
+                        </button>
+                        <button 
+                            className="bg-gray-700 text-red-500 font-bold py-2 px-4 rounded"
+                            onClick={handleRunCode}
+                            disabled={isCompiling}
+                        >
+                            terminal
+                        </button>
                     </div>
                 </div>
             </div>
-            <ToastReminder minutesLeft={Math.floor(timeLeft / 60)} />            
-            <SurrenderModal
-                ref={surrenderModalRef}
-                onConfirm={handleConfirmSurrender}
-                onCancel={handleCancelSurrender}
-                showModal={showSurrenderModal}
-            />
 
-            <TerminalModal
-                title="Terminal Output"
-                output={terminalOutput}
-                showModal={showTerminalModal}
-                loading={isCompiling}
-                onClose={() => setShowTerminalModal(false)}
-            />
+            {/* Terminal Modal */}
+            {showTerminalModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                    <div className="bg-gray-800 rounded-lg w-4/5 max-w-3xl">
+                        <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Terminal Output</h3>
+                            <button 
+                                className="text-gray-400 hover:text-white"
+                                onClick={() => setShowTerminalModal(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className="p-4">
+                            {isCompiling ? (
+                                <div className="flex items-center">
+                                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-red-500 mr-3"></div>
+                                    <p>Running your code...</p>
+                                </div>
+                            ) : (
+                                <pre className="font-mono text-sm whitespace-pre-wrap overflow-auto max-h-96">
+                                    {terminalOutput}
+                                </pre>
+                            )}
+                        </div>
+                        <div className="p-4 border-t border-gray-700 text-right">
+                            <button 
+                                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                                onClick={() => setShowTerminalModal(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Surrender Modal */}
+            {showSurrenderModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                    <div 
+                        ref={surrenderModalRef}
+                        className="bg-gray-800 rounded-lg w-96"
+                    >
+                        <div className="p-4 border-b border-gray-700">
+                            <h3 className="text-lg font-semibold">Confirm Surrender</h3>
+                        </div>
+                        <div className="p-4">
+                            <p className="mb-4">Are you sure you want to surrender? Your score will not be recorded.</p>
+                            <div className="flex justify-end space-x-3">
+                                <button 
+                                    className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded"
+                                    onClick={handleCancelSurrender}
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                                    onClick={handleConfirmSurrender}
+                                >
+                                    Surrender
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
-export default CodeArena;
+export default Progressive;

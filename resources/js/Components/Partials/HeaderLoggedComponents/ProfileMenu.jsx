@@ -121,10 +121,6 @@ const ProfileMenu = ({ userData, userStatus, updateUserStatus }) => {
               <FiShoppingBag className="action-icon" />
               Store
             </a>
-            <a href="/language" className="profile-action">
-              <FiGlobe className="action-icon" />
-              Language
-            </a>
             <a href="/logout" className="profile-action logout">
               <FiLogOut className="action-icon" />
               Log Out
