@@ -11,6 +11,8 @@ import CurrencyDisplay from './HeaderLoggedComponents/CurrencyDisplay.jsx';
 import NotificationsMenu from './HeaderLoggedComponents/NotificationsMenu.jsx';
 import SettingsMenu from './HeaderLoggedComponents/SettingsMenu.jsx';
 import ProfileMenu from './HeaderLoggedComponents/ProfileMenu.jsx';
+import FriendsButton from './HeaderLoggedComponents/FriendsButton.jsx';
+import FriendsSidebar from './HeaderLoggedComponents/FriendsSidebar.jsx';
 
 const HeaderLogged = () => {
   // Context and state
@@ -21,6 +23,10 @@ const HeaderLogged = () => {
   const [fontFamily, setFontFamily] = useState('var(--font-sans)');
   const [userStatus, setUserStatus] = useState('online');
   const [activeMode, setActiveMode] = useState('progressive');
+  const [friendsSidebarOpen, setFriendsSidebarOpen] = useState(false);
+  const [friendRequestCount, setFriendRequestCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   
   // Fetch user data
   useEffect(() => {
@@ -30,7 +36,7 @@ const HeaderLogged = () => {
         const response = await axios.get('/fetch-user');
         if (response.data && response.data.user) {
           setUserData(response.data.user);
-          
+          console.log(response.data.user);
           if (response.data.user.profile) {
             // Set font preference
             if (response.data.user.profile.preferred_font) {
@@ -57,6 +63,132 @@ const HeaderLogged = () => {
     };
 
     fetchUserData();
+  }, []);
+
+  // Fetch notifications
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        // In a real app, replace with actual API call
+        // const response = await axios.get('/api/notifications');
+        // setNotifications(response.data.notifications);
+        // setHasUnreadNotifications(response.data.notifications.some(notif => !notif.read));
+        
+        // Mock notifications for now
+        const mockNotifications = [
+          {
+            id: 1,
+            type: 'challenge',
+            title: 'New Challenge Available',
+            content: 'Try our new React components challenge!',
+            time: '10m ago',
+            read: false,
+            icon: 'FiCode'
+          },
+          {
+            id: 2,
+            type: 'rank',
+            title: 'Rank Updated',
+            content: 'Congratulations! You reached TechnoMatch tier.',
+            time: '2h ago',
+            read: false,
+            icon: 'FiAward'
+          },
+          {
+            id: 3,
+            type: 'coin',
+            title: 'Coins Awarded',
+            content: 'You earned 50 coins for completing daily challenge.',
+            time: '1d ago',
+            read: true,
+            icon: 'FiDollarSign'
+          }
+        ];
+        
+        setNotifications(mockNotifications);
+        setHasUnreadNotifications(mockNotifications.some(notif => !notif.read));
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+      }
+    };
+
+    fetchNotifications();
+    
+    // Set up polling for notifications
+    const interval = setInterval(fetchNotifications, 60000); // Every minute
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // Set up WebSocket connection for real-time notifications
+  useEffect(() => {
+    // Skip if user is not loaded yet
+    if (!userData || !userData.id) return;
+
+    // Connect to WebSocket server
+    // In a real app, use something like:
+    // const socket = new WebSocket(`wss://your-websocket-server.com/ws/notifications/${userData.id}`);
+    
+    // For this example, we'll simulate WebSocket events with a timer
+    const notificationTypes = ['challenge', 'rank', 'coin', 'message'];
+    const notificationIcons = ['FiCode', 'FiAward', 'FiDollarSign', 'FiMessageSquare'];
+    const notificationTitles = [
+      'New Challenge', 
+      'Rank Updated', 
+      'Coins Earned',
+      'New Message'
+    ];
+    const notificationContents = [
+      'A new coding challenge is available for you!',
+      'Your rank has been updated based on recent activity.',
+      'You earned coins for your contributions.',
+      'You received a new message from another developer.'
+    ];
+    
+    // Simulate receiving notifications every 15-30 seconds
+    const interval = setInterval(() => {
+      // Only 20% chance to receive a notification on each interval
+      if (Math.random() > 0.2) return;
+      
+      const typeIndex = Math.floor(Math.random() * notificationTypes.length);
+      const newNotification = {
+        id: Date.now(),
+        type: notificationTypes[typeIndex],
+        title: notificationTitles[typeIndex],
+        content: notificationContents[typeIndex],
+        time: 'Just now',
+        read: false,
+        icon: notificationIcons[typeIndex]
+      };
+      
+      handleNewNotification(newNotification);
+    }, Math.random() * 15000 + 15000); // Random interval between 15-30 seconds
+    
+    return () => {
+      clearInterval(interval);
+      // In a real app: socket.close();
+    };
+  }, [userData]);
+
+  // Fetch friend request count
+  useEffect(() => {
+    const fetchFriendRequests = async () => {
+      try {
+        const response = await axios.get('/api/friend-requests/count');
+        if (response.data && response.data.count !== undefined) {
+          setFriendRequestCount(response.data.count);
+        }
+      } catch (err) {
+        console.error("Error fetching friend requests count:", err);
+      }
+    };
+
+    fetchFriendRequests();
+    
+    // Set up polling for friend requests
+    const interval = setInterval(fetchFriendRequests, 60000); // Every minute
+    
+    return () => clearInterval(interval);
   }, []);
 
   // Apply font family to document
@@ -107,6 +239,48 @@ const HeaderLogged = () => {
     updateUserPreference('game_mode', mode);
   }, []);
 
+  // Toggle friends sidebar
+  const toggleFriendsSidebar = useCallback(() => {
+    setFriendsSidebarOpen(prev => !prev);
+  }, []);
+
+  // Handle new notification
+  const handleNewNotification = useCallback((notification) => {
+    setNotifications(prev => [notification, ...prev]);
+    setHasUnreadNotifications(true);
+  }, []);
+
+  // Mark notification as read
+  const markNotificationAsRead = useCallback((notificationId) => {
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notif => 
+        notif.id === notificationId 
+          ? { ...notif, read: true } 
+          : notif
+      )
+    );
+    
+    // Check if there are still any unread notifications
+    const stillHasUnread = notifications.some(notif => 
+      notif.id !== notificationId && !notif.read
+    );
+    setHasUnreadNotifications(stillHasUnread);
+    
+    // In a real app, send to server:
+    // await axios.post('/mark-notification-read', { notificationId });
+  }, [notifications]);
+
+  // Mark all notifications as read
+  const markAllNotificationsAsRead = useCallback(() => {
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notif => ({ ...notif, read: true }))
+    );
+    setHasUnreadNotifications(false);
+    
+    // In a real app, send to server:
+    // await axios.post('/mark-all-notifications-read');
+  }, []);
+
   // Loading and error states
   if (loading) {
     return (
@@ -148,53 +322,73 @@ const HeaderLogged = () => {
   }
 
   return (
-    <header className="technomatch-header">
-      <div className="header-container">
-        {/* Logo */}
-        <Logo />
+    <>
+      <header className="technomatch-header">
+        <div className="header-container">
+          {/* Logo */}
+          <Logo />
 
-        {/* Navigation with Play Button in the middle */}
-        <Navigation 
-          userStatus={userStatus} 
-          setUserStatus={setUserStatus}
-          activeMode={activeMode}
-          onGameModeChange={handleGameModeChange}
-          updateUserStatus={updateUserStatus}
-        />
-
-        <div className="header-actions">
-          {/* Progress/Rank Display */}
-          <ProgressDisplay 
-            userData={userData}
+          {/* Navigation with Play Button in the middle */}
+          <Navigation 
+            userStatus={userStatus} 
+            setUserStatus={setUserStatus}
             activeMode={activeMode}
+            onGameModeChange={handleGameModeChange}
+            updateUserStatus={updateUserStatus}
           />
 
-          {/* Currency Display */}
-          <CurrencyDisplay 
-            amount={userData.profile?.currency || 942}
-          />
+          <div className="header-actions">
+            {/* Progress/Rank Display */}
+            <ProgressDisplay 
+              userData={userData}
+              activeMode={activeMode}
+            />
 
-          {/* Notifications */}
-          <NotificationsMenu />
+            {/* Currency Display */}
+            <CurrencyDisplay 
+              amount={userData.profile?.currency || 942}
+            />
 
-          {/* Settings */}
-          <SettingsMenu 
-            darkMode={darkMode}
-            fontFamily={fontFamily}
-            userStatus={userStatus}
-            handleToggleTheme={handleToggleTheme}
-            handleFontChange={handleFontChange}
-            toggleOnlineStatus={toggleOnlineStatus}
-          />
+            {/* Notifications */}
+            <NotificationsMenu 
+              notifications={notifications}
+              hasUnreadNotifications={hasUnreadNotifications}
+              markNotificationAsRead={markNotificationAsRead}
+              markAllNotificationsAsRead={markAllNotificationsAsRead}
+              onNewNotification={handleNewNotification}
+            />
 
-          {/* User Profile */}
-          <ProfileMenu 
-            userData={userData}
-            userStatus={userStatus}
-          />
+            {/* Settings */}
+            <SettingsMenu 
+              darkMode={darkMode}
+              fontFamily={fontFamily}
+              userStatus={userStatus}
+              handleToggleTheme={handleToggleTheme}
+              handleFontChange={handleFontChange}
+              toggleOnlineStatus={toggleOnlineStatus}
+            />
+            
+            {/* Friends Button */}
+            <FriendsButton 
+              toggleFriendsSidebar={toggleFriendsSidebar}
+              friendRequestCount={friendRequestCount}
+            />
+
+            {/* User Profile */}
+            <ProfileMenu 
+              userData={userData}
+              userStatus={userStatus}
+            />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      
+      {/* Friends Sidebar */}
+      <FriendsSidebar 
+        isOpen={friendsSidebarOpen}
+        onClose={() => setFriendsSidebarOpen(false)}
+      />
+    </>
   );
 };
 

@@ -1,0 +1,519 @@
+// ProblemDetails.scss
+// Comprehensive styling for the Problem Details component
+
+.card {
+  background-color: #191D2A; // Darker background matching the image
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  color: var(--text-light);
+  margin-bottom: var(--spacing-4);
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  &.full-height {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &.loading {
+    opacity: 0.7;
+    pointer-events: none;
+
+    .loading-indicator {
+      display: inline-flex;
+      align-items: center;
+      margin-left: var(--spacing-2);
+      font-size: var(--text-sm);
+      color: var(--primary-color);
+      
+      &::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        margin-left: var(--spacing-2);
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: var(--z-modal);
+    border-radius: 0;
+    margin: 0;
+    background-color: var(--bg-dark);
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Dark mode specific styling
+  &.dark {
+    background-color: #191D2A; // Darker background matching the image
+    color: var(--text-light);
+
+    .card-header {
+      background-color: #14161F; // Darker header background like the image
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-content {
+      background-color: #191D2A;
+    }
+
+    .tab-navigation {
+      background-color: #0F111A; // Very dark nav background like in image
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+      .tab {
+        color: rgba(255, 255, 255, 0.6); // Lighter text for better visibility
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        &.active {
+          color: #ffffff;
+          border-bottom-color: #ff4040; // Red underline as in image
+          background-color: rgba(255, 64, 64, 0.1); // Slight red tint when active
+        }
+
+        .badge {
+          background-color: #ff4040; // Red badge like in image
+          color: white;
+        }
+      }
+    }
+
+    .test-case {
+      background-color: var(--leaderboard-item);
+      border: 1px solid var(--leaderboard-border);
+    }
+
+    .example-block {
+      background-color: rgba(var(--info-color-rgb), 0.08);
+      border-left: 3px solid var(--info-color);
+    }
+
+    .empty-state {
+      color: var(--text-muted);
+    }
+
+    .retry-btn {
+      background-color: var(--button-neutral-bg);
+      color: var(--button-neutral-text);
+      
+      &:hover {
+        background-color: var(--button-neutral-hover);
+      }
+    }
+
+    .action-btn {
+      color: var(--text-muted);
+      
+      &:hover {
+        color: var(--text-light);
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    pre {
+      background-color: #0F111A; // Darker code background
+      color: #ffffff;
+    }
+  }
+
+  // Light mode specific styling
+  &:not(.dark) {
+    background-color: var(--bg-light);
+    color: var(--text-light);
+
+    .card-header {
+      background-color: var(--bg-dark);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card-content {
+      background-color: var(--bg-light);
+    }
+
+    .tab-navigation {
+      background-color: var(--bg-dark);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+      .tab {
+        color: var(--text-muted);
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        &.active {
+          color: var(--primary-color);
+          border-bottom-color: var(--primary-color);
+          background-color: rgba(var(--primary-color-rgb), 0.05);
+        }
+
+        .badge {
+          background-color: var(--primary-light-color);
+          color: var(--primary-color);
+        }
+      }
+    }
+
+    .test-case {
+      background-color: var(--bg-light);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .example-block {
+      background-color: rgba(var(--info-color-rgb), 0.05);
+      border-left: 3px solid var(--info-color);
+    }
+
+    .empty-state {
+      color: var(--text-muted);
+    }
+
+    .retry-btn {
+      background-color: var(--button-neutral-bg);
+      color: var(--button-neutral-text);
+      
+      &:hover {
+        background-color: var(--button-neutral-hover);
+      }
+    }
+
+    .action-btn {
+      color: var(--text-muted);
+      
+      &:hover {
+        color: var(--text-light);
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    pre {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+    }
+  }
+}
+
+// Header styling
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-1) var(--spacing-1); 
+  border-bottom: 1px solid var(--feature-border);
+  
+  h2 {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-size: var(--text-base); // Smaller font size
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    
+    .header-icon {
+      margin-right: var(--spacing-2);
+      color: #ff4040; // Red icon like in image
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    align-items: center;
+  }
+  
+  .action-btn {
+    background: transparent;
+    border: none;
+    padding: var(--spacing-1);
+    border-radius: var(--border-radius-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--spacing-2);
+    transition: all 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--input-focus-border);
+    }
+  }
+}
+
+// Content area
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// Tab navigation
+.tab-navigation {
+  display: flex;
+  padding: 0; // Remove padding
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  
+  &::-webkit-scrollbar {
+    display: none; // Hide scrollbar as requested
+  }
+  
+  .tab {
+    padding: var(--spacing-2) var(--spacing-3); // More compact padding
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    
+    &:focus {
+      outline: none;
+    }
+    
+    .icon {
+      margin-right: var(--spacing-2);
+      display: flex;
+      align-items: center;
+      color: #ff4040; // Red icon like in image
+    }
+    
+    .badge {
+      margin-left: var(--spacing-2);
+      padding: 0 var(--spacing-1);
+      border-radius: var(--border-radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// Tab content
+.tab-content {
+  flex: 1;
+  overflow: hidden; // Change to hidden
+  position: relative;
+  padding: 0; // Remove padding
+  transition: opacity 0.3s ease;
+  
+  &.loading {
+    opacity: 0.6;
+  }
+  
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: var(--spacing-8);
+    text-align: center;
+    
+    p {
+      margin: var(--spacing-3) 0;
+    }
+    
+    .retry-btn {
+      display: flex;
+      align-items: center;
+      padding: var(--spacing-2) var(--spacing-4);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      
+      svg {
+        margin-right: var(--spacing-2);
+      }
+    }
+  }
+}
+
+// Test cases section
+.test-cases {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2); // Smaller gap
+  width: 100%;
+  padding: 0; // Remove padding
+  overflow: hidden; // Hide overflow
+}
+
+.test-case {
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  margin: 0; // Remove margin
+  
+  .test-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-1); // Smaller margin
+    
+    .test-id {
+      font-weight: 600;
+      font-size: var(--text-sm);
+    }
+    
+    .test-actions {
+      display: flex;
+      align-items: center;
+      
+      .checkbox {
+        width: 18px;
+        height: 18px;
+        border: 1px solid var(--neutral-color);
+        border-radius: var(--border-radius-xs);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-xs);
+        cursor: pointer;
+      }
+    }
+  }
+  
+  .test-content {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    padding: var(--spacing-2);
+    background-color: rgba(0, 0, 0, 0.2); // Darker background
+    border-radius: var(--border-radius-xs);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+// Expected output section
+.expected-output-section {
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  
+  .output-paragraph {
+    line-height: var(--leading-relaxed);
+    
+    .output-line {
+      margin-bottom: var(--spacing-1);
+    }
+  }
+  
+  .example-block {
+    padding: var(--spacing-3);
+    border-radius: var(--border-radius);
+    margin: var(--spacing-3) 0;
+    
+    .example-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--spacing-2);
+      
+      .example-icon {
+        margin-right: var(--spacing-2);
+      }
+    }
+    
+    .example-details {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      padding-left: var(--spacing-4);
+      
+      .example-line {
+        margin-bottom: var(--spacing-1);
+      }
+    }
+  }
+}
+
+// Code container
+.code-container {
+  height: 100%;
+  overflow: hidden; // Change to hidden
+  
+  .code-header {
+    padding: var(--spacing-2) var(--spacing-3); // More compact
+    background-color: #14161F; // Darker header
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  pre {
+    padding: var(--spacing-3);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    overflow: hidden; // Change to hidden
+    height: 100%;
+    background-color: #0F111A; // Darker code background like the image
+    
+    code {
+      font-family: inherit;
+      color: #ffffff; // White text for better readability
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .card-header {
+    padding: var(--spacing-2) var(--spacing-3);
+    
+    h2 {
+      font-size: var(--text-base);
+    }
+  }
+  
+  .tab-navigation .tab {
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+  
+  .tab-content {
+    padding: var(--spacing-3);
+  }
+  
+  .test-case {
+    padding: var(--spacing-2);
+  }
+  
+  .example-block {
+    padding: var(--spacing-2);
+  }
+}

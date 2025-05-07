@@ -11,6 +11,8 @@ use App\Models\UserProfile;
 use App\Models\UserProgressiveStat;
 use App\Models\UserRankStat;
 use Illuminate\Support\Facades\Log;
+use App\Http\Middleware\AuthRedirectPaths;
+use App\Http\Controllers\Auth\UserEmailVerification;
 
 class UserAccountController extends Controller
 {   
@@ -102,6 +104,16 @@ class UserAccountController extends Controller
     
     public function logout(Request $request)
     {
+        // Update user profile to set online status to offline
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->profile) {
+                $user->profile->online_status = 'offline';
+                $user->profile->last_active = now();
+                $user->profile->save();
+            }
+        }
+        
         $request->session()->flush();
         Auth::logout();
         return redirect('/login');
@@ -119,6 +131,7 @@ class UserAccountController extends Controller
         $usernameOrEmail = $request->input('username_or_email');
         $user = null;
     
+        // Find user by email or username
         if (filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)) {
             $user = User::where('email', $usernameOrEmail)->first();
         } else {
@@ -126,18 +139,57 @@ class UserAccountController extends Controller
         }
     
         if ($user && Hash::check($request->input('password'), $user->password)) {
+            // Login the user with Laravel Auth
+            Auth::login($user, $request->boolean('remember_me', false));
+            
+            // Update user profile status to online
+            if ($user->profile) {
+                $user->profile->online_status = 'online';
+                $user->profile->last_active = now();
+                $user->profile->save();
+            }
+            
+            // Store session variables
             session(['user_id' => $user->id]);
-    
+            
+            // Check if email is verified
+            $isVerified = $user->hasVerifiedEmail();
+            $redirectTo = $isVerified ? route('dashboard') : '/verify';
+            
+            // If email is not verified, send verification email automatically
+            if (!$isVerified) {
+                // Create verification code request with the user's email
+                $verificationRequest = new Request(['email' => $user->email]);
+                
+                // Use the existing verification service to send the code
+                app(UserEmailVerification::class)->sendVerificationCode($verificationRequest);
+            }
+            
+            // For direct form submissions (non-AJAX)
+            if (!$request->expectsJson() && !$request->ajax()) {
+                return redirect()->to($redirectTo);
+            }
+            
+            // For JSON requests (API/AJAX)
             return response()->json([
                 'message' => 'Login successful',
                 'user' => $user,
-                'session_user_id' => session('user_id'),
+                'redirect' => $redirectTo,
+                'verified' => $isVerified
             ]);
         }
     
-        return response()->json([
-            'message' => 'Invalid credentials',
-        ], 401);
+        // Failed login handling
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message' => 'Invalid credentials',
+            ], 401);
+        }
+        
+        // For regular form submissions, redirect back with error
+        return redirect()->back()
+            ->withInput($request->only('username_or_email', 'remember_me'))
+            ->withErrors(['login_failed' => 'These credentials do not match our records.']);
     }
 
     public function checkEmail(Request $request)
@@ -211,5 +263,32 @@ class UserAccountController extends Controller
             'message' => 'User registered successfully.',
             'user' => $user
         ]);
+    }
+    public function authCheck(Request $request)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $isVerified = $user->hasVerifiedEmail();
+            $redirectTo = $isVerified ? '/dashboard' : '/verify';
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'authenticated' => true,
+                    'user' => $user,
+                    'verified' => $isVerified,
+                    'redirect' => $redirectTo
+                ]);
+            }
+            
+            return redirect()->to($redirectTo);
+        }
+        
+        if ($request->expectsJson()) {
+            return response()->json([
+                'authenticated' => false
+            ]);
+        }
+        
+        return redirect()->route('login');
     }
 }

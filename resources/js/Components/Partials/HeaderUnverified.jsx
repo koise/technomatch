@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiSun, FiMoon, FiSettings, FiUser, FiLogOut, FiChevronDown, FiMail } from 'react-icons/fi';
+import { FiSun, FiMoon, FiSettings, FiUser, FiLogOut, FiChevronDown, FiMail, FiAlertCircle } from 'react-icons/fi';
 import { useTheme } from '../../context/ThemeContext';
 import '../../../scss/Components/Partials/HeaderLogged.scss';
 import axios from 'axios';
@@ -96,6 +96,31 @@ const HeaderUnverified = ({ refreshUser }) => {
 
   return (
     <>
+      {!userData.email_verified && showVerificationBanner && (
+        <div className="verification-banner">
+          <div className="verification-banner-content">
+            <FiAlertCircle className="alert-icon" />
+            <span>
+              Your email is not verified. Please verify your email to access all features.
+            </span>
+            <div className="verification-banner-actions">
+              <a href="/verify" className="verify-link">
+                Verify Now
+              </a>
+              <button
+                onClick={handleResendVerification}
+                disabled={resendCooldown > 0 || resendLoading}
+                className="resend-button"
+              >
+                {resendLoading ? 'Sending...' : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+              </button>
+              <button onClick={dismissBanner} className="dismiss-button">
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <header className="technomatch-header unverified">
         <div className="header-container">
           <div className="logo-section">

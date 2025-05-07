@@ -10,8 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
-class EmailVerificationController extends Controller
+class EmailVerificationPromptController extends Controller
 {
     protected $mailService;
 
@@ -20,6 +21,54 @@ class EmailVerificationController extends Controller
         $this->mailService = $mailService;
     }
 
+    /**
+     * Show the email verification prompt.
+     */
+    public function __invoke(Request $request)
+    {
+        if ($request->user() && $request->user()->hasVerifiedEmail()) {
+            return redirect()->intended(route('dashboard'));
+        }
+
+        // If user is logged in but email not verified, auto-send verification code
+        if ($request->user() && !$request->user()->hasVerifiedEmail()) {
+            // Prepare a request with the user's email
+            $verificationRequest = new Request(['email' => $request->user()->email]);
+            
+            // Send verification code
+            $this->sendVerificationCode($verificationRequest);
+            
+            // Pass user email to the view
+            return Inertia::render('Auth/VerifyUser', [
+                'email' => $request->user()->email,
+                'message' => 'A verification code has been sent to your email.',
+            ]);
+        }
+
+        return Inertia::render('Auth/VerifyUser');
+    }
+
+    /**
+     * Show the email verification prompt.
+     */
+    public function send(Request $request)
+    {
+        $email = $request->input('email');
+        if (!$email && $request->user()) {
+            $email = $request->user()->email;
+        }
+
+        $user = User::where('email', $email)->first();
+        if ($user) {
+            return $this->sendVerificationCode($request);
+        }
+
+        return redirect('/verify');
+    }
+
+    /**
+     * Send verification code to the specified email
+     */
     public function sendVerificationCode(Request $request)
     {
         $request->validate([
@@ -57,6 +106,13 @@ class EmailVerificationController extends Controller
                 $body
             );
 
+            Log::info('Email sending attempt', [
+                'email' => $email,
+                'result' => $result,
+                'verification_id' => $verification->id,
+                'verification_code' => $verificationCode
+            ]);
+
             if ($result['status']) {
                 return response()->json([
                     'sent' => true,
@@ -64,13 +120,40 @@ class EmailVerificationController extends Controller
                 ], 200);
             } else {
                 Log::error('Failed to send verification email: ' . $result['message']);
+                
+                // For debugging purposes in dev environment
+                if (config('app.debug')) {
+                    return response()->json([
+                        'sent' => false,
+                        'message' => 'Failed to send verification code: ' . $result['message'],
+                        'debug_info' => $result
+                    ], 500);
+                }
+                
                 return response()->json([
                     'sent' => false,
                     'message' => 'Failed to send verification code. Please try again.'
                 ], 500);
             }
         } catch (\Exception $e) {
-            Log::error('Exception while sending verification email: ' . $e->getMessage());
+            Log::error('Exception while sending verification email', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // For debugging purposes in dev environment
+            if (config('app.debug')) {
+                return response()->json([
+                    'sent' => false,
+                    'message' => 'An error occurred: ' . $e->getMessage(),
+                    'debug_info' => [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                ], 500);
+            }
+            
             return response()->json([
                 'sent' => false,
                 'message' => 'An error occurred while sending the verification code.'
@@ -132,9 +215,7 @@ class EmailVerificationController extends Controller
         // If there's a user associated with this email, update their verification status
         $user = User::where('email', $email)->first();
         if ($user) {
-            $user->email_verified = true;
-            $user->verify_at = Carbon::now();
-            $user->save();
+            $user->markEmailAsVerified();
         }
 
         return response()->json([

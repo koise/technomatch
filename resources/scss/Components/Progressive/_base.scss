@@ -1,0 +1,30 @@
+// Global styles
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-darker);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+// Progressive page layout
+.progressive {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--bg-darker);
+  color: var(--text-primary);
+}
+
+// Content wrapper
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+} 

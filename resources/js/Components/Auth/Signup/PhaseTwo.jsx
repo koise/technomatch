@@ -37,6 +37,13 @@ export default function PhaseTwo({ onNext, onBack }) {
     return () => clearInterval(interval);
   }, [countdown]);
 
+  // Auto-send verification code when component mounts if email is provided
+  useEffect(() => {
+    if (formData.email && !emailSent) {
+      handleSendEmail();
+    }
+  }, []);
+
   const handleSendEmail = async () => {
     try {
       setResending(true);

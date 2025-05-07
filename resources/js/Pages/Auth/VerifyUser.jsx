@@ -6,15 +6,18 @@ import FinalPhase from '@/Components/Auth/Signup/FinalPhase';
 import StepNavigation from '@/Components/Auth/Signup/StepNavigation';
 import HeaderUnverified from '@/Components/Partials/HeaderUnverified';
 import { ThemeProvider } from '@/context/ThemeContext';
+import axios from 'axios';
 import '../../../scss/Pages/Signup.scss';
 
 const VerifyUser = () => {
   // Get step from localStorage or default to 0
   const storedStep = localStorage.getItem('verifyStep');
   const [step, setStep] = useState(2);
+  const [user, setUser] = useState(null);
   
   // Form data state management
   const [formData, setFormData] = useState({
+    email: '',
     phaseTwoInput: localStorage.getItem('phaseTwoInput') || '',
     finalPhaseInput: localStorage.getItem('finalPhaseInput') || '',
   });
@@ -23,6 +26,35 @@ const VerifyUser = () => {
   useEffect(() => {
     localStorage.setItem('verifyStep', step);
   }, [step]);
+
+  // Get URL params and user data
+  useEffect(() => {
+    // Get email from URL params if available
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get('email');
+    
+    if (emailParam) {
+      setFormData(prev => ({ ...prev, email: emailParam }));
+    } else {
+      // If no email param, fetch user data
+      fetchUserData();
+    }
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get('/fetch-user');
+      if (response.data.user) {
+        setUser(response.data.user);
+        setFormData(prev => ({ 
+          ...prev, 
+          email: response.data.user.email 
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
@@ -55,7 +87,7 @@ const VerifyUser = () => {
 
   return (
     <ThemeProvider>
-      <HeaderUnverified />
+      <HeaderUnverified refreshUser={fetchUserData} />
       <SignupProvider>
         <div className="signup-container">
           <div className="signup-wrapper">

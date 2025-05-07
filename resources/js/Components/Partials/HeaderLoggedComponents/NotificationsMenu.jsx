@@ -1,14 +1,40 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FiBell, FiCode, FiAward, FiDollarSign } from 'react-icons/fi';
+import React, { useState, useEffect, useRef } from 'react';
+import { FiBell, FiCode, FiAward, FiDollarSign, FiMessageSquare } from 'react-icons/fi';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../../../scss/Components/Partials/modalAndToast.scss';
 
-const NotificationsMenu = () => {
+const NotificationsMenu = ({ 
+  notifications = [], 
+  hasUnreadNotifications = false, 
+  markNotificationAsRead, 
+  markAllNotificationsAsRead,
+  onNewNotification
+}) => {
   // State
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  const [animatedNotifications, setAnimatedNotifications] = useState(() => {
+    // Initialize from localStorage if available
+    try {
+      const saved = localStorage.getItem('animatedNotifications');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch (err) {
+      console.error("Error loading animated notifications from localStorage:", err);
+      return new Set();
+    }
+  });
 
   // Refs
   const notificationsMenuRef = useRef(null);
+
+  // Save animated notifications to localStorage when they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('animatedNotifications', JSON.stringify([...animatedNotifications]));
+    } catch (err) {
+      console.error("Error saving animated notifications to localStorage:", err);
+    }
+  }, [animatedNotifications]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -24,104 +50,123 @@ const NotificationsMenu = () => {
     };
   }, []);
 
-  // Fetch notifications
+  // Show toast for new notifications
   useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  // Fetch notifications
-  const fetchNotifications = async () => {
-    try {
-      // Mock notifications - replace with actual API call
-      const mockNotifications = [
-        {
-          id: 1,
-          type: 'challenge',
-          title: 'New Challenge Available',
-          content: 'Try our new React components challenge!',
-          time: '10m ago',
-          read: false,
-          icon: <FiCode />
-        },
-        {
-          id: 2,
-          type: 'rank',
-          title: 'Rank Updated',
-          content: 'Congratulations! You reached TechnoMatch tier.',
-          time: '2h ago',
-          read: false,
-          icon: <FiAward />
-        },
-        {
-          id: 3,
-          type: 'coin',
-          title: 'Coins Awarded',
-          content: 'You earned 50 coins for completing daily challenge.',
-          time: '1d ago',
-          read: true,
-          icon: <FiDollarSign />
-        }
-      ];
+    // Find new unread notifications that haven't been animated yet
+    const newNotifications = notifications.filter(notif => 
+      !notif.read && !animatedNotifications.has(notif.id)
+    );
+    
+    if (newNotifications.length > 0) {
+      // Create a new set with all previously animated notifications plus new ones
+      const updatedAnimated = new Set(animatedNotifications);
       
-      setNotifications(mockNotifications);
-      setHasUnreadNotifications(mockNotifications.some(notif => !notif.read));
+      // Show toast for each new notification and mark as animated
+      newNotifications.forEach(notification => {
+        showNotificationToast(notification);
+        updatedAnimated.add(notification.id);
+      });
       
-      // In a real app, use something like:
-      // const response = await axios.get('/notifications');
-      // setNotifications(response.data.notifications);
-      // setHasUnreadNotifications(response.data.hasUnread);
-    } catch (err) {
-      console.error("Error fetching notifications:", err);
+      setAnimatedNotifications(updatedAnimated);
     }
-  };
+  }, [notifications, animatedNotifications]);
 
-  // Mark notification as read
-  const markNotificationAsRead = async (notificationId) => {
-    try {
-      // Update local state first for immediate feedback
-      setNotifications(prevNotifications => 
-        prevNotifications.map(notif => 
-          notif.id === notificationId 
-            ? { ...notif, read: true } 
-            : notif
-        )
-      );
-      
-      // Check if there are still any unread notifications
-      const stillHasUnread = notifications.some(notif => 
-        notif.id !== notificationId && !notif.read
-      );
-      setHasUnreadNotifications(stillHasUnread);
-      
-      // In a real app, send to server:
-      // await axios.post('/mark-notification-read', { notificationId });
-    } catch (err) {
-      console.error("Error marking notification as read:", err);
-    }
-  };
-
-  // Mark all notifications as read
-  const markAllNotificationsAsRead = async () => {
-    try {
-      setNotifications(prevNotifications => 
-        prevNotifications.map(notif => ({ ...notif, read: true }))
-      );
-      setHasUnreadNotifications(false);
-      
-      // In a real app, send to server:
-      // await axios.post('/mark-all-notifications-read');
-    } catch (err) {
-      console.error("Error marking all notifications as read:", err);
-    }
+  const showNotificationToast = (notification) => {
+    // Only show toast for unread notifications
+    if (notification.read) return;
+    
+    const toastTypeMap = {
+      'challenge': 'success',
+      'rank': 'info',
+      'coin': 'info',
+      'message': 'default'
+    };
+    
+    const toastType = toastTypeMap[notification.type] || 'default';
+    
+    // Map icon string to actual icon component
+    const iconMap = {
+      'FiCode': <FiCode />,
+      'FiAward': <FiAward />,
+      'FiDollarSign': <FiDollarSign />,
+      'FiMessageSquare': <FiMessageSquare />
+    };
+    
+    const icon = typeof notification.icon === 'string' 
+      ? iconMap[notification.icon] || <FiBell />
+      : notification.icon;
+    
+    toast(
+      <div className="notification-toast">
+        <div className={`notification-icon ${notification.type}`}>
+          {icon}
+        </div>
+        <div className="notification-content">
+          <h4>{notification.title}</h4>
+          <p>{notification.content}</p>
+        </div>
+      </div>,
+      {
+        position: "bottom-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        type: toastType,
+        className: `notification-toast-${notification.type}`,
+        toastId: `notification-${notification.id}`, // Prevent duplicate toasts
+      }
+    );
   };
 
   // Toggle notifications menu
-  const toggleNotificationsMenu = useCallback(() => {
+  const toggleNotificationsMenu = () => {
     setShowNotifications(prev => !prev);
-  }, []);
+  };
+
+  // Handle notification click
+  const handleNotificationClick = (notificationId) => {
+    if (markNotificationAsRead) {
+      markNotificationAsRead(notificationId);
+    }
+  };
+
+  // Clean up old notification IDs from localStorage to prevent it from growing too large
+  useEffect(() => {
+    try {
+      // Get all notification IDs
+      const allNotificationIds = new Set(notifications.map(n => n.id));
+      
+      // Filter animated notifications to only include current notifications
+      const updatedAnimated = new Set(
+        [...animatedNotifications].filter(id => allNotificationIds.has(id))
+      );
+      
+      // Only update if we removed some IDs
+      if (updatedAnimated.size < animatedNotifications.size) {
+        setAnimatedNotifications(updatedAnimated);
+      }
+    } catch (err) {
+      console.error("Error cleaning up animated notifications:", err);
+    }
+  }, [notifications]);
 
   return (
     <div className="dropdown-container" ref={notificationsMenuRef}>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        limit={3}
+      />
       <button 
         className="icon-button notification-button"
         onClick={toggleNotificationsMenu}
@@ -148,25 +193,39 @@ const NotificationsMenu = () => {
           
           <div className="notifications-list">
             {notifications.length > 0 ? (
-              notifications.map(notification => (
-                <div 
-                  key={notification.id} 
-                  className={`notification-item ${notification.read ? 'read' : 'unread'}`}
-                  onClick={() => markNotificationAsRead(notification.id)}
-                >
-                  <div className={`notification-icon ${notification.type}`}>
-                    {notification.icon}
-                  </div>
-                  <div className="notification-content">
-                    <div className="notification-header">
-                      <h4>{notification.title}</h4>
-                      <span className="notification-time">{notification.time}</span>
+              notifications.map(notification => {
+                // Map icon string to actual icon component
+                const iconMap = {
+                  'FiCode': <FiCode />,
+                  'FiAward': <FiAward />,
+                  'FiDollarSign': <FiDollarSign />,
+                  'FiMessageSquare': <FiMessageSquare />
+                };
+                
+                const icon = typeof notification.icon === 'string' 
+                  ? iconMap[notification.icon] || <FiBell />
+                  : notification.icon;
+                
+                return (
+                  <div 
+                    key={notification.id} 
+                    className={`notification-item ${notification.read ? 'read' : 'unread'}`}
+                    onClick={() => handleNotificationClick(notification.id)}
+                  >
+                    <div className={`notification-icon ${notification.type}`}>
+                      {icon}
                     </div>
-                    <p>{notification.content}</p>
+                    <div className="notification-content">
+                      <div className="notification-header">
+                        <h4>{notification.title}</h4>
+                        <span className="notification-time">{notification.time}</span>
+                      </div>
+                      <p>{notification.content}</p>
+                    </div>
+                    {!notification.read && <div className="unread-dot"></div>}
                   </div>
-                  {!notification.read && <div className="unread-dot"></div>}
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="empty-notifications">
                 <p>No notifications yet</p>

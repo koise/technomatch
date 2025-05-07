@@ -1,283 +1,254 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FaPython, FaJava } from 'react-icons/fa';
-import { SiC } from 'react-icons/si';
+import React, { useState, useEffect } from 'react';
+import { FaCode, FaTerminal } from 'react-icons/fa';
+import '../../../../scss/Pages/Progressive.scss';
+import HeaderComponent from '../../../Components/Game/HeaderComponent';
+import EditorArea from '../../../Components/Game/EditorArea';
+import Sidebar from '../../../Components/Game/Sidebar';
+import { ThemeProvider } from '../../../context/ThemeContext';
 
-// Main component
+// Mock data for the UI
+const problemsList = [
+  { id: 1, title: 'Two Sum', difficulty: 'easy', category: 'Array' },
+  { id: 2, title: 'Valid Parentheses', difficulty: 'easy', category: 'Stack' },
+  { id: 3, title: 'Merge Two Sorted Lists', difficulty: 'easy', category: 'Linked List' },
+  { id: 4, title: 'Add Two Numbers', difficulty: 'medium', category: 'Linked List' },
+  { id: 5, title: 'LRU Cache', difficulty: 'medium', category: 'Design' },
+  { id: 6, title: 'Binary Tree Level Order Traversal', difficulty: 'medium', category: 'Tree' },
+  { id: 7, title: 'Trapping Rain Water', difficulty: 'hard', category: 'Array' },
+  { id: 8, title: 'Median of Two Sorted Arrays', difficulty: 'hard', category: 'Array' },
+];
+
+const problemData = {
+  instruction: `Write a function that takes two numbers as input and returns their sum.
+
+Your function should handle both positive and negative integers, as well as zero.
+
+The numbers will be in the range of -10^9 to 10^9.
+
+Return the sum of the two numbers.`,
+  testCase: `Example 1:
+Input: a = 0, b = 0
+Expected Output: 0
+Explanation: 0 + 0 = 0
+
+Example 2:
+Input: a = -2, b = 10
+Expected Output: 8
+Explanation: -2 + 10 = 8
+
+Example 3:
+Input: a = 5, b = 3
+Expected Output: 8`,
+  expectedOutput: `<div class="test-cases">
+  <div class="test-case">
+    <div class="test-header">
+      <div class="test-id">Test 3</div>
+      <div class="checkbox">☐</div>
+    </div>
+    <div class="test-content">5 + 3 = 8</div>
+  </div>
+  
+  <div class="test-case">
+    <div class="test-header">
+      <div class="test-id">Test 2</div>
+      <div class="checkbox">☐</div>
+    </div>
+    <div class="test-content">-2 + 10 = 8</div>
+  </div>
+  
+  <div class="test-case">
+    <div class="test-header">
+      <div class="test-id">Test 1</div>
+      <div class="checkbox">☐</div>
+    </div>
+    <div class="test-content">0 + 0 = 0</div>
+  </div>
+  
+  <div class="test-case">
+    <div class="test-header">
+      <div class="test-id">Test 4</div>
+      <div class="checkbox">☐</div>
+    </div>
+    <div class="test-content">100 + 200 = 300</div>
+  </div>
+  
+  <div class="test-case">
+    <div class="test-header">
+      <div class="test-id">Test 5</div>
+      <div class="checkbox">☐</div>
+    </div>
+    <div class="test-content">-50 + 50 = 0</div>
+  </div>
+  
+  <div class="test-case">
+    <div class="test-header">
+      <div class="test-id">Test 6</div>
+      <div class="checkbox">☐</div>
+    </div>
+    <div class="test-content">999 + 1 = 1000</div>
+  </div>
+  
+  <div class="test-case">
+    <div class="test-header">
+      <div class="test-id">Test 7</div>
+      <div class="checkbox">☐</div>
+    </div>
+    <div class="test-content">-25 + (-25) = -50</div>
+  </div>
+</div>`
+};
+
+// Mock editor content for display
+const sampleCode = `function sum(a, b) {
+  return a + b;
+}
+
+// Example usage
+console.log(sum(5, 3));  // Output: 8`;
+
+const fontFamilies = [
+  { label: 'Fira Mono', value: 'Fira Mono, monospace' },
+  { label: 'JetBrains Mono', value: 'JetBrains Mono, monospace' },
+  { label: 'Source Code Pro', value: 'Source Code Pro, monospace' },
+  { label: 'Monaco', value: 'Monaco, monospace' },
+  { label: 'Consolas', value: 'Consolas, monospace' },
+];
+
+// Main Component
 const Progressive = () => {
-    const [language, setLanguage] = useState('Python');
-    const [fontSize, setFontSize] = useState(14);
-    const [fontFamily, setFontFamily] = useState('Courier New');
-    const [timeLeft, setTimeLeft] = useState(605);
-    const [showSettings, setShowSettings] = useState(false);
-    const [showTerminalModal, setShowTerminalModal] = useState(false);
-    const [terminalOutput, setTerminalOutput] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isCompiling, setIsCompiling] = useState(false);
-    const [showSurrenderModal, setShowSurrenderModal] = useState(false);
-    const [isUserEditorLoading, setIsUserEditorLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('instruction');
-    const settingsRef = useRef(null);
-    const surrenderModalRef = useRef(null);
+  // State management
+  const [fontSize, setFontSize] = useState('16px');
+  const [terminalOutput, setTerminalOutput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [selectedProblem, setSelectedProblem] = useState(0);
+  const [difficultyFilter, setDifficultyFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [problemExpanded, setProblemExpanded] = useState(true);
+  const [instructionsExpanded, setInstructionsExpanded] = useState(true);
+  const [activeTab, setActiveTab] = useState('instruction');
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [fontFamily, setFontFamily] = useState(fontFamilies[0].value);
+  const [level, setLevel] = useState(1);
+  const [exp, setExp] = useState(10);
+  const [codeValue, setCodeValue] = useState(sampleCode);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const maxExp = 20; // exp needed for next level
 
-    const helloWorldCode = {
-        Python: `def square(number):\n    # Your code here\n    return number * number\nprint(square(5))`,
-        Java: `public class Solution {\n    public static int square(int number) { return number * number; }\n    public static void main(String[] args) { System.out.println(square(5)); }}`,
-        C: `#include <stdio.h>\nint square(int number) { return number * number; }\nint main() { printf("%d\\n", square(5)); return 0; }`,
-    };
-
-    const [code, setCode] = useState(helloWorldCode[language]);
-
-    useEffect(() => {
-        setCode(helloWorldCode[language]);
-    }, [language]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        const userTimeout = setTimeout(() => setIsUserEditorLoading(false), 1000);
-        return () => {
-            clearTimeout(userTimeout);
-        };
-    }, []);
-
-    const formatTime = (time) => {
-        const minutes = Math.floor(time / 60);
-        const seconds = time % 60;
-        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    };
-
-    const handleClickOutside = (e) => {
-        if (settingsRef.current && !settingsRef.current.contains(e.target)) {
-            setShowSettings(false);
-        }
-        if (surrenderModalRef.current && !surrenderModalRef.current.contains(e.target)) {
-            setShowSurrenderModal(false); 
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const handleRunCode = () => {
-        setIsCompiling(true);
-        setShowTerminalModal(true);
+  // Simulate run code with better output formatting
+  const runCode = () => {
+    setLoading(true);
+    setTerminalOutput('');
+    setTerminalOpen(true);
     
-        setTimeout(() => {
-            const output = "Executing code...\n\n> python solution.py\n Running test cases: \nTest Case 1: Input: 5 ✓ Passed\nOutput: 25\nExpected: 25\n\nTest Case 2: Input: -7 ✓ Passed\nOutput: 49\nExpected: 49\n\nAll tests completed successfully!";
-            setTerminalOutput(output);
-            setIsCompiling(false);
-        }, 2000);
-    };
+    setTimeout(() => {
+      const results = [
+        '> Running test cases...',
+        '✓ Test case 1: [2,7,11,15], target = 9 => [0,1]',
+        '✓ Test case 2: [3,2,4], target = 6 => [1,2]',
+        '✓ Test case 3: [3,3], target = 6 => [0,1]',
+        '',
+        '3/3 tests passed',
+        '> Time complexity: O(n)',
+        '> Space complexity: O(n)',
+        '',
+        '✓ All tests passed!'
+      ].join('\n');
+      
+      setTerminalOutput(results);
+      setLoading(false);
+    }, 1500);
+  };
+
+  // Terminal Modal Component
+  const TerminalModal = () => {
+    if (!terminalOpen) return null;
     
-    const handleSubmitCode = () => {
-        setIsSubmitting(true);
-        setShowTerminalModal(true);
-
-        setTimeout(() => {
-            const output = "Validating solution...\n\nRunning all test cases:\nBasic Test Case: ✓ Passed\nNegative Numbers: ✓ Passed\nZero Input: ✓ Passed\nDecimal Numbers: ✓ Passed\n\n✅ All test cases passed!\n\nSubmitting to leaderboard...\nYour solution has been submitted successfully!";
-            setTerminalOutput(output);
-            setIsSubmitting(false);
-        }, 2500);
-    };
-
-    const handleSurrender = () => {
-        setShowSurrenderModal(true);
-    };
-
-    const handleConfirmSurrender = () => {
-        setShowSurrenderModal(false);
-        alert('You have surrendered. Your score will not be recorded.');
-        setTimeLeft(0);
-    };
-
-    const handleCancelSurrender = () => {
-        setShowSurrenderModal(false);
-    };
-
     return (
-        <div className="bg-black text-white min-h-screen">
-            {/* Header Bar */}
-            <header className="bg-gray-900 p-4 flex justify-between items-center border-b border-gray-800">
-                <button className="text-red-500 font-bold">back</button>
-                <div className="flex space-x-4">
-                    <span className="text-red-500">xp</span>
-                    <button className="text-red-500">settings</button>
-                </div>
-            </header>
-
-            <div className="flex h-[calc(100vh-64px)]">
-                {/* Left Section - Code Editor */}
-                <div className="w-2/3 p-4 border-r border-gray-800">
-                    <h2 className="text-center mb-2 text-gray-400">monaco editor</h2>
-                    <div className="bg-gray-900 h-full border border-gray-700 rounded-md p-2">
-                        {isUserEditorLoading ? (
-                            <div className="flex items-center justify-center h-full">
-                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500"></div>
-                                <p className="ml-2">Loading editor...</p>
-                            </div>
-                        ) : (
-                            <pre className="text-gray-300 font-mono text-sm whitespace-pre overflow-auto h-full">
-                                {code}
-                            </pre>
-                        )}
-                    </div>
-                </div>
-
-                {/* Right Section - Problem Bank & Controls */}
-                <div className="w-1/3 flex flex-col">
-                    {/* Problem Bank Header */}
-                    <div className="p-4 border-b border-gray-800">
-                        <h2 className="text-2xl font-bold text-center">problem bank</h2>
-                    </div>
-
-                    {/* Tab Navigation */}
-                    <div className="flex border-b border-gray-800">
-                        <button 
-                            className={`px-4 py-2 ${activeTab === 'instruction' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400'}`}
-                            onClick={() => setActiveTab('instruction')}
-                        >
-                            instruction
-                        </button>
-                        <button 
-                            className={`px-4 py-2 ${activeTab === 'testCase' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400'}`}
-                            onClick={() => setActiveTab('testCase')}
-                        >
-                            test case
-                        </button>
-                        <button 
-                            className={`px-4 py-2 ${activeTab === 'yourOutput' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400'}`}
-                            onClick={() => setActiveTab('yourOutput')}
-                        >
-                            your output
-                        </button>
-                    </div>
-
-                    {/* Tab Content */}
-                    <div className="flex-grow overflow-auto p-4">
-                        {activeTab === 'instruction' && (
-                            <div>
-                                <h3 className="text-xl mb-4">instructions</h3>
-                                <p className="text-gray-300 mb-2">Write the code to solve the problem.</p>
-                                <p className="text-gray-300">Use the test cases to verify your solution.</p>
-                            </div>
-                        )}
-                        {activeTab === 'testCase' && (
-                            <div>
-                                <h3 className="text-lg font-semibold mb-2">Test Cases:</h3>
-                                <div className="bg-gray-800 p-3 rounded mb-3">
-                                    <p className="text-sm text-gray-300">Test case 1: Test description here.</p>
-                                </div>
-                                <div className="bg-gray-800 p-3 rounded">
-                                    <p className="text-sm text-gray-300">Test case 2: Test description here.</p>
-                                </div>
-                            </div>
-                        )}
-                        {activeTab === 'yourOutput' && (
-                            <div>
-                                <h3 className="text-lg font-semibold mb-2">Output:</h3>
-                                <pre className="bg-gray-800 p-3 rounded text-sm text-gray-300 font-mono">
-                                    {terminalOutput || "Run your code to see output here."}
-                                </pre>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="p-4 border-t border-gray-800 flex space-x-4">
-                        <button 
-                            className="bg-white text-black font-bold py-2 px-4 rounded flex-1"
-                            onClick={handleSubmitCode}
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? 'Submitting...' : 'SUBMIT'}
-                        </button>
-                        <button 
-                            className="bg-gray-700 text-red-500 font-bold py-2 px-4 rounded"
-                            onClick={handleRunCode}
-                            disabled={isCompiling}
-                        >
-                            terminal
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* Terminal Modal */}
-            {showTerminalModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-                    <div className="bg-gray-800 rounded-lg w-4/5 max-w-3xl">
-                        <div className="p-4 border-b border-gray-700 flex justify-between items-center">
-                            <h3 className="text-lg font-semibold">Terminal Output</h3>
-                            <button 
-                                className="text-gray-400 hover:text-white"
-                                onClick={() => setShowTerminalModal(false)}
-                            >
-                                ✕
-                            </button>
-                        </div>
-                        <div className="p-4">
-                            {isCompiling ? (
-                                <div className="flex items-center">
-                                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-red-500 mr-3"></div>
-                                    <p>Running your code...</p>
-                                </div>
-                            ) : (
-                                <pre className="font-mono text-sm whitespace-pre-wrap overflow-auto max-h-96">
-                                    {terminalOutput}
-                                </pre>
-                            )}
-                        </div>
-                        <div className="p-4 border-t border-gray-700 text-right">
-                            <button 
-                                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-                                onClick={() => setShowTerminalModal(false)}
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
+      <div className="terminal-modal-overlay">
+        <div className={`terminal-modal ${isDarkMode ? 'dark' : 'light'}`}>
+          <div className="terminal-header">
+            <h3>Terminal Output</h3>
+            <button onClick={() => setTerminalOpen(false)} className="close-btn">×</button>
+          </div>
+          <div className="terminal-content">
+            {loading ? (
+              <div className="loading-indicator">Running code...</div>
+            ) : (
+              <pre>{terminalOutput}</pre>
             )}
-
-            {/* Surrender Modal */}
-            {showSurrenderModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-                    <div 
-                        ref={surrenderModalRef}
-                        className="bg-gray-800 rounded-lg w-96"
-                    >
-                        <div className="p-4 border-b border-gray-700">
-                            <h3 className="text-lg font-semibold">Confirm Surrender</h3>
-                        </div>
-                        <div className="p-4">
-                            <p className="mb-4">Are you sure you want to surrender? Your score will not be recorded.</p>
-                            <div className="flex justify-end space-x-3">
-                                <button 
-                                    className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded"
-                                    onClick={handleCancelSurrender}
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-                                    onClick={handleConfirmSurrender}
-                                >
-                                    Surrender
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+          </div>
         </div>
+      </div>
     );
+  };
+
+  return (
+    <ThemeProvider>
+      <div className="progressive">
+        <HeaderComponent 
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          fontFamily={fontFamily}
+          setFontFamily={setFontFamily}
+          fontFamilies={fontFamilies}
+          level={level}
+          exp={exp}
+          maxExp={maxExp}
+        />
+
+        <div className="content-wrapper">
+          <EditorArea 
+            fontSize={fontSize}
+            fontFamily={fontFamily}
+            isDarkMode={isDarkMode}
+            codeValue={codeValue}
+            onCodeChange={setCodeValue}
+          />
+
+          <Sidebar 
+            problemExpanded={problemExpanded}
+            setProblemExpanded={setProblemExpanded}
+            problems={problemsList}
+            selectedProblem={selectedProblem}
+            setSelectedProblem={setSelectedProblem}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            difficultyFilter={difficultyFilter}
+            setDifficultyFilter={setDifficultyFilter}
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
+            instructionsExpanded={instructionsExpanded}
+            setInstructionsExpanded={setInstructionsExpanded}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            problemData={problemData}
+            runCode={runCode}
+          />
+        </div>
+
+        {/* Run Code Button */}
+        <div className="run-code-button-container">
+          <button 
+            className={`run-code-button ${loading ? 'loading' : ''}`} 
+            onClick={runCode}
+            disabled={loading}
+          >
+            {loading ? 'Running...' : (
+              <>
+                <FaTerminal /> Run in terminal
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Terminal Modal */}
+        <TerminalModal />
+      </div>
+    </ThemeProvider>
+  );
 };
 
 export default Progressive;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import AuthHeader from '../../Components/Auth/Login/AuthHeader';
@@ -21,6 +21,41 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [processing, setProcessing] = useState(false);
+  
+  // Check authentication on component mount
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
+  
+  // Function to check if user is already authenticated
+  const checkAuthentication = async () => {
+    try {
+      const response = await axios.get('/auth-check');
+      if (response.data.authenticated) {
+        window.location.href = response.data.redirect || '/dashboard';
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+    }
+  };
+  
+  // Function to verify auth status after login
+  const verifyAuthAndRedirect = async () => {
+    try {
+      // Small delay to allow session to be established
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const response = await axios.get('/auth-check');
+      
+      if (response.data.authenticated) {
+        window.location.href = response.data.redirect || '/dashboard';
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Auth verification error:', error);
+      return false;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,31 +66,43 @@ export default function Login() {
       setProcessing(false);
       return;
     }
-  
+    
     try {
+      const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
+      
       const response = await axios.post('/login', {
         username_or_email: data.email,
         password: data.password,
         remember_me: rememberMe,
+        _token: token, // Include the CSRF token in the request body
+      }, {
+        headers: {
+          'X-CSRF-TOKEN': token, // Also include it in headers for redundancy
+          'Accept': 'application/json',
+        },
+        withCredentials: true, // Enable sending cookies with the request
       });
       
       if (response.status === 200) {
-        const user = response.data.user;
-      
-        if (user.email_verified) {
-          Inertia.visit('/dashboard');
+        const userData = response.data;
+        
+        // Check if response contains a redirect URL
+        if (userData.redirect) {
+          // Use the redirect URL from the response
+          window.location.href = userData.redirect;
         } else {
-          Inertia.visit('/verify', { data: { email: user.email } });
+          // Fallback to dashboard
+          window.location.href = '/dashboard';
         }
       }
-    } catch (error) {
-      console.log('Login Error:', error);
-  
-      if (error.response) {
-        console.log('Error Response:', error.response.data);
-  
-        const { message, errors } = error.response.data;
-  
+    } catch (axiosError) {
+      console.log('Login Error:', axiosError);
+
+      if (axiosError.response) {
+        console.log('Error Response:', axiosError.response.data);
+
+        const { message, errors } = axiosError.response.data;
+
         if (message) {
           setErrors({ auth: message });
         } else if (errors) {
@@ -68,10 +115,10 @@ export default function Login() {
         }
       } else {
         // Log a fallback error message
-        console.log('Error without response:', error.message);
+        console.log('Error without response:', axiosError.message);
         setErrors({ auth: 'An error occurred. Please try again.' });
       }
-    } finally {
+      
       setProcessing(false);
     }
   };

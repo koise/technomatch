@@ -1,0 +1,292 @@
+// Modern Problem Bank Component
+.problem-bank {
+    flex-shrink: 0;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-lg);
+    min-height: 0;
+    position: relative;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    background: var(--bg-light);
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    
+    &:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    
+    // Colorful gradient header line
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(
+        to right, 
+        #dc3545, 
+        #ff6b6b, 
+        #ff4757
+      );
+      z-index: 1;
+    }
+    
+    // Card header with toggle
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-2) var(--spacing-3);
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--neutral-outline);
+      cursor: pointer;
+      
+      h2 {
+        font-size: var(--text-lg);
+        font-weight: 600;
+        color: var(--text-light);
+        margin: 0;
+      }
+    }
+    
+    // Search and filter section
+    .search-bar {
+      padding: var(--spacing-4) var(--spacing-5);
+      border-bottom: 1px solid var(--neutral-outline);
+      flex-shrink: 0;
+      background: var(--bg-light);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-3);
+      
+      .search-input {
+        width: 100%;
+        padding: var(--spacing-3);
+        background: var(--bg-darker);
+        border: 1px solid var(--neutral-outline);
+        border-radius: var(--border-radius);
+        color: var(--text-light);
+        font-size: var(--text-sm);
+        transition: all 0.3s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: #dc3545;
+          box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+        
+        &::placeholder {
+          color: var(--text-muted);
+        }
+      }
+      
+      .filter-controls {
+        display: flex;
+        gap: var(--spacing-2);
+        
+        select {
+          flex: 1;
+          padding: var(--spacing-2) var(--spacing-3);
+          background: var(--bg-darker);
+          border: 1px solid var(--neutral-outline);
+          border-radius: var(--border-radius);
+          color: var(--text-light);
+          font-size: var(--text-sm);
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(75, 85, 99, 0.6)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right var(--spacing-2) center;
+          background-size: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          
+          &:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+          }
+          
+          &:hover {
+            border-color: var(--neutral-dark);
+          }
+          
+          option {
+            background: var(--bg-dark);
+            color: var(--text-light);
+          }
+        }
+      }
+    }
+    
+    // Problem list section
+    .problem-list {
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(220, 53, 69, 0.3) transparent;
+      flex: 1 1 auto;
+      padding: var(--spacing-3);
+      min-height: 0;
+      max-height: 100%;
+      height: 50%;
+      
+      &::-webkit-scrollbar {
+        width: 8px;
+        background: transparent;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: rgba(220, 53, 69, 0.3);
+        border-radius: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb:hover {
+        background: rgba(220, 53, 69, 0.5);
+      }
+      
+      // Problem item card
+      .problem-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-4);
+        margin-bottom: var(--spacing-3);
+        cursor: pointer;
+        border-radius: var(--border-radius);
+        background-color: var(--bg-light);
+        box-shadow: var(--shadow-sm);
+        border-left: 3px solid transparent;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: var(--bg-darker);
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+        
+        // Selected state
+        &.selected {
+          background: rgba(220, 53, 69, 0.05);
+          border-left: 3px solid #dc3545;
+        }
+        
+        // Problem info section
+        .problem-info {
+          flex: 1;
+          padding-right: var(--spacing-4);
+          display: flex;
+          flex-direction: column;
+          
+          .title {
+            display: block;
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: var(--spacing-2);
+            transition: color 0.3s ease;
+          }
+          
+          .category {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            padding: var(--spacing-1) var(--spacing-2);
+            background: rgba(var(--neutral-color-rgb), 0.1);
+            border-radius: var(--border-radius-full);
+            display: inline-block;
+            width: fit-content;
+          }
+        }
+        
+        // Difficulty badge
+        .difficulty {
+          flex-shrink: 0;
+          font-size: var(--text-xs);
+          padding: var(--spacing-1) var(--spacing-2);
+          border-radius: var(--border-radius-full);
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+          
+          &.easy {
+            background: rgba(var(--success-color-rgb), 0.15);
+            color: var(--success-color);
+            box-shadow: 0 0 0 1px rgba(var(--success-color-rgb), 0.2);
+          }
+          
+          &.medium {
+            background: rgba(var(--warning-color-rgb), 0.15);
+            color: var(--warning-color);
+            box-shadow: 0 0 0 1px rgba(var(--warning-color-rgb), 0.2);
+          }
+          
+          &.hard {
+            background: rgba(var(--error-color-rgb), 0.15);
+            color: var(--error-color);
+            box-shadow: 0 0 0 1px rgba(var(--error-color-rgb), 0.2);
+          }
+        }
+      }
+      
+      // Empty state
+      .empty-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100px;
+        padding: var(--spacing-4);
+        color: var(--text-muted);
+        text-align: center;
+        font-size: var(--text-sm);
+      }
+    }
+    
+    // Dark mode styles
+    .dark & {
+      background: var(--bg-dark);
+      box-shadow: var(--shadow-md);
+      
+      .card-header {
+        background: var(--bg-darker);
+      }
+      
+      .search-bar {
+        background: var(--bg-dark);
+        
+        .search-input {
+          background: var(--bg-darker);
+          border-color: rgba(255, 255, 255, 0.1);
+          color: var(--text-light);
+          
+          &:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+          }
+        }
+        
+        .filter-controls select {
+          background-color: var(--bg-darker);
+          border-color: rgba(255, 255, 255, 0.1);
+          color: var(--text-light);
+        }
+      }
+      
+      .problem-item {
+        background: var(--bg-dark);
+        
+        &:hover {
+          background: var(--bg-darker);
+        }
+        
+        &.selected {
+          background: rgba(220, 53, 69, 0.15);
+        }
+      }
+    }
+  }
