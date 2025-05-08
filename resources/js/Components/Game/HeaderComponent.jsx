@@ -179,18 +179,7 @@ const HeaderComponent = ({
                 border: '1px solid rgba(255,255,255,0.08)'
               }}
             >
-              <div style={{ marginBottom: '1.1rem' }}>
-                <label style={{ fontSize: '0.95em', fontWeight: 500 }}>Font Size</label>
-                <input
-                  type="range"
-                  min={12}
-                  max={24}
-                  value={parseInt(fontSize)}
-                  onChange={e => setFontSize(e.target.value + 'px')}
-                  style={{ width: '100%' }}
-                />
-                <span style={{ float: 'right', fontSize: '0.9em' }}>{fontSize}</span>
-              </div>
+             
               <div style={{ marginBottom: '1.1rem' }}>
                 <label style={{ fontSize: '0.95em', fontWeight: 500 }}>Font Family</label>
                 <select

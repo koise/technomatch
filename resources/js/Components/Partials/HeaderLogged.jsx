@@ -3,6 +3,7 @@ import { useTheme } from '../../context/ThemeContext';
 import axios from 'axios';
 import { FiAlertCircle } from 'react-icons/fi';
 import '../../../scss/Components/Partials/HeaderLogged.scss';
+import { initAuth } from '../../utils/auth';
 
 import Logo from './HeaderLoggedComponents/Logo.jsx';
 import Navigation from './HeaderLoggedComponents/Navigation.jsx';
@@ -174,7 +175,22 @@ const HeaderLogged = () => {
   useEffect(() => {
     const fetchFriendRequests = async () => {
       try {
-        const response = await axios.get('/api/friend-requests/count');
+        // Check authentication first
+        const isAuthenticated = await initAuth();
+        if (!isAuthenticated) {
+          console.error("Authentication error. Please log in again.");
+          return;
+        }
+        
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const response = await axios.get('/api/friend-requests/count', {
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true
+        });
         if (response.data && response.data.count !== undefined) {
           setFriendRequestCount(response.data.count);
         }

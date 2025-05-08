@@ -1,519 +1,658 @@
-// ProblemDetails.scss
-// Comprehensive styling for the Problem Details component
+// Problem Bank UI - SCSS Styles
+// This file contains all styling for the Problem Bank components
 
-.card {
-  background-color: #191D2A; // Darker background matching the image
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  color: var(--text-light);
-  margin-bottom: var(--spacing-4);
-  position: relative;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+// Import variables
+@import 'variables';
 
-  &.full-height {
+// Problem Details Component Styling
+.problem-details {
+  // Core component styling
+  &-container {
+    background: linear-gradient(to bottom, var(--bg-dark), var(--bg-darker));
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+    transition: all 0.3s ease;
+    
+    &.fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-modal);
+      border-radius: 0;
+      height: 100vh;
+      width: 100vw;
+    }
   }
-
-  &.loading {
-    opacity: 0.7;
-    pointer-events: none;
-
-    .loading-indicator {
-      display: inline-flex;
+  
+  // Header section
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.15);
+    background-color: rgba(var(--bg-darker), 0.8);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-20);
+    
+    &-title {
+      display: flex;
       align-items: center;
-      margin-left: var(--spacing-2);
-      font-size: var(--text-sm);
-      color: var(--primary-color);
+      gap: var(--spacing-2);
       
-      &::after {
-        content: '';
-        width: 12px;
-        height: 12px;
-        margin-left: var(--spacing-2);
-        border: 2px solid var(--primary-color);
-        border-radius: 50%;
-        border-top-color: transparent;
-        animation: spin 1s linear infinite;
+      &-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--border-radius-sm);
+        background-color: rgba(var(--primary-color-rgb), 0.15);
+        color: var(--primary-color);
+      }
+      
+      &-text {
+        font-weight: 600;
+        font-size: var(--text-lg);
+        color: var(--text-light);
+      }
+    }
+    
+    &-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+  }
+  
+  // Loading state
+  &-loading {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    
+    svg {
+      animation: spin 1s linear infinite;
+      margin-right: var(--spacing-1);
+    }
+  }
+  
+  // Tabs navigation
+  &-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.1);
+    background-color: var(--bg-darker);
+    
+    &-item {
+      padding: var(--spacing-3) var(--spacing-4);
+      color: var(--text-muted);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      
+      &:hover {
+        color: var(--text-light);
+        background-color: rgba(var(--primary-color-rgb), 0.05);
+      }
+      
+      &.active {
+        color: var(--text-light);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background-color: var(--primary-color);
+        }
+      }
+      
+      &-content {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        
+        svg {
+          color: var(--primary-color);
+        }
+      }
+      
+      &-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 var(--spacing-1);
+        border-radius: 9999px;
+        background-color: rgba(var(--primary-color-rgb), 0.15);
+        color: var(--primary-color);
+        font-size: var(--text-xs);
+        font-weight: 600;
       }
     }
   }
-
-  &.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: var(--z-modal);
-    border-radius: 0;
-    margin: 0;
-    background-color: var(--bg-dark);
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
+  
+  // Tab content
+  &-content {
+    flex: 1;
+    overflow: auto;
+    padding: var(--spacing-6);
+    background-color: var(--bg-darker);
+    
+    &-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      text-align: center;
+      padding: var(--spacing-8);
+      
+      svg {
+        color: var(--text-muted);
+        margin-bottom: var(--spacing-4);
+        opacity: 0.5;
+      }
+      
+      p {
+        margin-bottom: var(--spacing-4);
+        font-size: var(--text-lg);
+      }
+    }
+    
+    pre {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      line-height: var(--leading-relaxed);
+      color: var(--text-light);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
   }
-
-  // Dark mode specific styling
-  &.dark {
-    background-color: #191D2A; // Darker background matching the image
-    color: var(--text-light);
-
-    .card-header {
-      background-color: #14161F; // Darker header background like the image
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  
+  // Instructions content formatting
+  &-instructions {
+    line-height: var(--leading-relaxed);
+    
+    h1, h2, h3, h4 {
+      margin-top: var(--spacing-6);
+      margin-bottom: var(--spacing-4);
+      color: var(--text-light);
+      font-weight: 600;
     }
-
-    .card-content {
-      background-color: #191D2A;
+    
+    h1 {
+      font-size: var(--text-2xl);
+      border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.1);
+      padding-bottom: var(--spacing-2);
     }
-
-    .tab-navigation {
-      background-color: #0F111A; // Very dark nav background like in image
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-      .tab {
-        color: rgba(255, 255, 255, 0.6); // Lighter text for better visibility
+    
+    h2 {
+      font-size: var(--text-xl);
+    }
+    
+    p, ul, ol {
+      margin-bottom: var(--spacing-4);
+      color: var(--text-muted);
+    }
+    
+    ul, ol {
+      padding-left: var(--spacing-6);
+      
+      li {
+        margin-bottom: var(--spacing-2);
+      }
+    }
+    
+    code {
+      font-family: var(--font-mono);
+      background-color: rgba(var(--primary-color-rgb), 0.1);
+      padding: 0.2em 0.4em;
+      border-radius: var(--border-radius-xs);
+      font-size: 0.9em;
+    }
+    
+    pre code {
+      display: block;
+      padding: var(--spacing-4);
+      background-color: var(--bg-dark);
+      border-radius: var(--border-radius);
+      overflow: auto;
+      margin: var(--spacing-4) 0;
+    }
+  }
+  
+  // Expected output section
+  &-expected-output {
+    &-example {
+      background-color: rgba(var(--info-color-rgb), 0.1);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      margin-bottom: var(--spacing-4);
+      border: 1px solid rgba(var(--info-color-rgb), 0.2);
+      
+      &-header {
+        display: flex;
+        align-items: center;
+        padding: var(--spacing-3);
+        background-color: rgba(var(--info-color-rgb), 0.15);
+        border-bottom: 1px solid rgba(var(--info-color-rgb), 0.2);
         
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.05);
+        svg {
+          color: var(--info-color);
+          margin-right: var(--spacing-2);
         }
         
-        &.active {
-          color: #ffffff;
-          border-bottom-color: #ff4040; // Red underline as in image
-          background-color: rgba(255, 64, 64, 0.1); // Slight red tint when active
+        span {
+          font-weight: 500;
+          color: var(--text-light);
         }
-
-        .badge {
-          background-color: #ff4040; // Red badge like in image
+      }
+      
+      &-content {
+        padding: var(--spacing-3);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        
+        div {
+          padding: var(--spacing-1) 0;
+        }
+      }
+    }
+  }
+  
+  // Test case item
+  &-test-case {
+    background-color: var(--bg-dark);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: var(--spacing-3);
+    border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: rgba(var(--primary-color-rgb), 0.3);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-3);
+      background-color: rgba(var(--bg-darker), 0.5);
+      
+      &-label {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+      
+      &-status {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: var(--border-radius-xs);
+        transition: all 0.2s ease;
+        
+        &.unchecked {
+          border: 1px solid var(--text-muted);
+        }
+        
+        &.checked {
+          background-color: var(--success-color);
           color: white;
         }
       }
     }
-
-    .test-case {
-      background-color: var(--leaderboard-item);
-      border: 1px solid var(--leaderboard-border);
-    }
-
-    .example-block {
-      background-color: rgba(var(--info-color-rgb), 0.08);
-      border-left: 3px solid var(--info-color);
-    }
-
-    .empty-state {
-      color: var(--text-muted);
-    }
-
-    .retry-btn {
-      background-color: var(--button-neutral-bg);
-      color: var(--button-neutral-text);
-      
-      &:hover {
-        background-color: var(--button-neutral-hover);
-      }
-    }
-
-    .action-btn {
-      color: var(--text-muted);
-      
-      &:hover {
-        color: var(--text-light);
-        background-color: rgba(255, 255, 255, 0.05);
-      }
-    }
-
-    pre {
-      background-color: #0F111A; // Darker code background
-      color: #ffffff;
-    }
-  }
-
-  // Light mode specific styling
-  &:not(.dark) {
-    background-color: var(--bg-light);
-    color: var(--text-light);
-
-    .card-header {
-      background-color: var(--bg-dark);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .card-content {
-      background-color: var(--bg-light);
-    }
-
-    .tab-navigation {
-      background-color: var(--bg-dark);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-
-      .tab {
-        color: var(--text-muted);
-        
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.02);
-        }
-        
-        &.active {
-          color: var(--primary-color);
-          border-bottom-color: var(--primary-color);
-          background-color: rgba(var(--primary-color-rgb), 0.05);
-        }
-
-        .badge {
-          background-color: var(--primary-light-color);
-          color: var(--primary-color);
-        }
-      }
-    }
-
-    .test-case {
-      background-color: var(--bg-light);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .example-block {
-      background-color: rgba(var(--info-color-rgb), 0.05);
-      border-left: 3px solid var(--info-color);
-    }
-
-    .empty-state {
-      color: var(--text-muted);
-    }
-
-    .retry-btn {
-      background-color: var(--button-neutral-bg);
-      color: var(--button-neutral-text);
-      
-      &:hover {
-        background-color: var(--button-neutral-hover);
-      }
-    }
-
-    .action-btn {
-      color: var(--text-muted);
-      
-      &:hover {
-        color: var(--text-light);
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    }
-
-    pre {
-      background-color: var(--bg-dark);
-      color: var(--text-light);
-    }
-  }
-}
-
-// Header styling
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-1) var(--spacing-1); 
-  border-bottom: 1px solid var(--feature-border);
-  
-  h2 {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    font-size: var(--text-base); // Smaller font size
-    font-weight: 500;
-    cursor: pointer;
-    user-select: none;
     
-    .header-icon {
-      margin-right: var(--spacing-2);
-      color: #ff4040; // Red icon like in image
-    }
-  }
-  
-  .action-buttons {
-    display: flex;
-    align-items: center;
-  }
-  
-  .action-btn {
-    background: transparent;
-    border: none;
-    padding: var(--spacing-1);
-    border-radius: var(--border-radius-xs);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: var(--spacing-2);
-    transition: all 0.2s ease;
-    
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px var(--input-focus-border);
-    }
-  }
-}
-
-// Content area
-.card-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-// Tab navigation
-.tab-navigation {
-  display: flex;
-  padding: 0; // Remove padding
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  flex-shrink: 0;
-  
-  &::-webkit-scrollbar {
-    display: none; // Hide scrollbar as requested
-  }
-  
-  .tab {
-    padding: var(--spacing-2) var(--spacing-3); // More compact padding
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    white-space: nowrap;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    
-    &:focus {
-      outline: none;
-    }
-    
-    .icon {
-      margin-right: var(--spacing-2);
-      display: flex;
-      align-items: center;
-      color: #ff4040; // Red icon like in image
-    }
-    
-    .badge {
-      margin-left: var(--spacing-2);
-      padding: 0 var(--spacing-1);
-      border-radius: var(--border-radius-full);
-      font-size: var(--text-xs);
-      font-weight: 600;
-      min-width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-}
-
-// Tab content
-.tab-content {
-  flex: 1;
-  overflow: hidden; // Change to hidden
-  position: relative;
-  padding: 0; // Remove padding
-  transition: opacity 0.3s ease;
-  
-  &.loading {
-    opacity: 0.6;
-  }
-  
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: var(--spacing-8);
-    text-align: center;
-    
-    p {
-      margin: var(--spacing-3) 0;
-    }
-    
-    .retry-btn {
-      display: flex;
-      align-items: center;
-      padding: var(--spacing-2) var(--spacing-4);
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      
-      svg {
-        margin-right: var(--spacing-2);
-      }
-    }
-  }
-}
-
-// Test cases section
-.test-cases {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2); // Smaller gap
-  width: 100%;
-  padding: 0; // Remove padding
-  overflow: hidden; // Hide overflow
-}
-
-.test-case {
-  padding: var(--spacing-2);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  margin: 0; // Remove margin
-  
-  .test-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-1); // Smaller margin
-    
-    .test-id {
-      font-weight: 600;
+    &-content {
+      padding: var(--spacing-3);
+      font-family: var(--font-mono);
       font-size: var(--text-sm);
+      color: var(--text-light);
+      border-top: 1px solid rgba(var(--primary-color-rgb), 0.1);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  }
+  
+  // Action buttons
+  &-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    font-size: var(--text-sm);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    
+    svg {
+      margin-right: var(--spacing-2);
     }
     
-    .test-actions {
-      display: flex;
-      align-items: center;
+    // Primary button - Test Code
+    &-primary {
+      background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 6px rgba(var(--primary-color-rgb), 0.25);
       
-      .checkbox {
-        width: 18px;
-        height: 18px;
-        border: 1px solid var(--neutral-color);
-        border-radius: var(--border-radius-xs);
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 8px rgba(var(--primary-color-rgb), 0.35);
+        background: linear-gradient(to right, var(--primary-dark), var(--primary-dark));
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+    
+    // Secondary / utility buttons
+    &-secondary {
+      background-color: var(--bg-light);
+      color: var(--text-muted);
+      border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+      
+      &:hover {
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+      }
+    }
+    
+    // Disabled state
+    &-disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+    
+    // Cooldown state
+    &-cooldown {
+      position: relative;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      overflow: hidden;
+      cursor: not-allowed;
+      
+      .countdown-badge {
+        position: absolute;
+        top: 2px;
+        right: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 20px;
+        height: 20px;
+        background-color: var(--error-color);
+        color: white;
+        border-radius: 50%;
         font-size: var(--text-xs);
-        cursor: pointer;
+        font-weight: 600;
       }
-    }
-  }
-  
-  .test-content {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    padding: var(--spacing-2);
-    background-color: rgba(0, 0, 0, 0.2); // Darker background
-    border-radius: var(--border-radius-xs);
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-}
-
-// Expected output section
-.expected-output-section {
-  padding: var(--spacing-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-  
-  .output-paragraph {
-    line-height: var(--leading-relaxed);
-    
-    .output-line {
-      margin-bottom: var(--spacing-1);
-    }
-  }
-  
-  .example-block {
-    padding: var(--spacing-3);
-    border-radius: var(--border-radius);
-    margin: var(--spacing-3) 0;
-    
-    .example-title {
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      margin-bottom: var(--spacing-2);
       
-      .example-icon {
-        margin-right: var(--spacing-2);
+      .countdown-progress {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 4px;
+        background: linear-gradient(to right, var(--error-color), var(--primary-color));
       }
     }
     
-    .example-details {
-      font-family: var(--font-mono);
-      font-size: var(--text-sm);
-      padding-left: var(--spacing-4);
+    // Loading state
+    &-loading {
+      cursor: wait;
       
-      .example-line {
-        margin-bottom: var(--spacing-1);
+      svg {
+        animation: spin 1s linear infinite;
       }
     }
   }
-}
-
-// Code container
-.code-container {
-  height: 100%;
-  overflow: hidden; // Change to hidden
   
-  .code-header {
-    padding: var(--spacing-2) var(--spacing-3); // More compact
-    background-color: #14161F; // Darker header
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  // Action buttons on collapsed state
+  &-collapsed-action {
+    position: absolute;
+    top: 64px;
+    right: 12px;
+    padding: var(--spacing-1) var(--spacing-1);
+    background-color: var(--bg-dark);
+    color: var(--text-muted);
+    border-radius: var(--border-radius-sm);
+    z-index: var(--z-30);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transform: translateY(-1px);
+    }
   }
   
-  pre {
-    padding: var(--spacing-3);
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    line-height: var(--leading-relaxed);
-    overflow: hidden; // Change to hidden
-    height: 100%;
-    background-color: #0F111A; // Darker code background like the image
+  // Fullscreen exit button
+  &-fullscreen-exit {
+    position: absolute;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: var(--bg-dark);
+    color: var(--text-muted);
+    border-radius: 50%;
+    z-index: var(--z-30);
+    cursor: pointer;
+    transition: all 0.2s ease;
     
-    code {
-      font-family: inherit;
-      color: #ffffff; // White text for better readability
+    &:hover {
+      background-color: var(--bg-light);
+      color: var(--error-color);
+      transform: rotate(90deg);
     }
   }
 }
 
-// Animations
+// Animation keyframes
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-// Responsive adjustments
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Media queries
 @media (max-width: 768px) {
-  .card-header {
-    padding: var(--spacing-2) var(--spacing-3);
+  .problem-details {
+    &-tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      
+      &-item {
+        white-space: nowrap;
+        padding: var(--spacing-2) var(--spacing-3);
+      }
+    }
     
-    h2 {
-      font-size: var(--text-base);
+    &-header {
+      &-actions {
+        .problem-details-button {
+          span {
+            display: none;
+          }
+          
+          svg {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+    
+    &-content {
+      padding: var(--spacing-3);
+    }
+  }
+}
+
+// Dark mode specific overrides
+.dark {
+  .problem-details {
+    &-container {
+      background: linear-gradient(to bottom, var(--bg-dark), var(--bg-darker));
+    }
+    
+    &-test-case {
+      background-color: rgba(var(--bg-dark), 0.5);
+      
+      &-header {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+    &-instructions {
+      pre code {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+    &-expected-output {
+      &-example {
+        background-color: rgba(var(--info-color-rgb), 0.05);
+      }
+    }
+  }
+}
+
+// Component animations
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Transition classes for animations
+.transition-height {
+  transition: height 0.3s ease;
+}
+
+.transition-transform {
+  transition: transform 0.3s ease;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+// Test Status indicators
+.test-status {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-full);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  
+  &-passed {
+    background-color: rgba(var(--success-color-rgb), 0.1);
+    color: var(--success-color);
+    
+    svg {
+      color: var(--success-color);
+      margin-right: var(--spacing-1);
     }
   }
   
-  .tab-navigation .tab {
-    padding: var(--spacing-2) var(--spacing-3);
+  &-failed {
+    background-color: rgba(var(--error-color-rgb), 0.1);
+    color: var(--error-color);
+    
+    svg {
+      color: var(--error-color);
+      margin-right: var(--spacing-1);
+    }
   }
   
-  .tab-content {
-    padding: var(--spacing-3);
+  &-running {
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+    color: var(--primary-color);
+    
+    svg {
+      color: var(--primary-color);
+      margin-right: var(--spacing-1);
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+// Custom scrollbars for the component
+.problem-details-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--primary-color-rgb), 0.3) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
   
-  .test-case {
-    padding: var(--spacing-2);
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
   
-  .example-block {
-    padding: var(--spacing-2);
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--primary-color-rgb), 0.3);
+    border-radius: 20px;
+    
+    &:hover {
+      background-color: rgba(var(--primary-color-rgb), 0.5);
+    }
   }
 }

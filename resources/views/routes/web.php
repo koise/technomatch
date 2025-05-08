@@ -7,10 +7,8 @@ use App\Http\Controllers\Auth\UserAccountController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\UserEmailVerification;
 use App\Http\Controllers\Auth\RedirectController;
-use App\Http\Controllers\User\UserStatsController;
+use App\Http\Controllers\UserStatsController;
 use App\Http\Controllers\MailDiagnosticController;
-use App\Http\Controllers\FriendController;
-use App\Http\Controllers\UserController;
 
 // Auth check route - use this to debug authentication status
 Route::get('/auth-check', [UserAccountController::class, 'authCheck']);
@@ -25,12 +23,10 @@ Route::middleware(['public.only'])->group(function () {
 // Asset routes
 Route::get('/avatar/{filename}', fn($filename) => file_exists($path = public_path("images/UserDefaultProfile/$filename")) ? response()->file($path) : abort(404));
 
-// Define the dashboard route explicitly with authentication and verification middleware
 Route::get('/dashboard', function () { 
     return Inertia::render('Users/Dashboard'); 
 })->middleware(['requires.verification'])->name('dashboard');
 
-// Other authenticated routes that don't require verification
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/sidebar', function () { return Inertia::render('Users/Sidebar'); });
 });
@@ -65,29 +61,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/fetch-user', [UserStatsController::class, 'fetchUser'])->name('fetchUser');
     Route::post('/update-user-status', [UserStatsController::class, 'updateUserStatus']);
     Route::post('/update-user-preference', [UserStatsController::class, 'updateUserPreference']);
-    
-    // Friend API routes moved from api.php to web.php
-    Route::get('/api/friends', [FriendController::class, 'index']);
-    Route::get('/api/friend-requests/count', [FriendController::class, 'requestsCount']);
-    Route::get('/api/friend-requests', [FriendController::class, 'requests']);
-    Route::get('/api/users/search', [UserController::class, 'search']);
-    Route::get('/api/friends/signed-urls', [FriendController::class, 'getSignedUrls']);
-    Route::post('/api/friend-requests', [FriendController::class, 'sendRequest'])->name('friends.sendRequest');
-    Route::post('/api/friend-requests/{id}/accept', [FriendController::class, 'acceptRequest'])->name('friends.acceptRequest');
-    Route::post('/api/friend-requests/{id}/reject', [FriendController::class, 'rejectRequest'])->name('friends.rejectRequest');
-    Route::delete('/api/friends/{id}', [FriendController::class, 'removeFriend'])->name('friends.removeFriend');
 });
 
-// Email verification
+
 Route::get('/send-mail', [EmailVerificationPromptController::class, 'send']);
 Route::post('/send-verification-code', [UserEmailVerification::class, 'sendVerificationCode']);
 Route::post('/verify-code', [UserEmailVerification::class, 'verifyCode']);
 
-// Mail diagnostics (only available in development environment)
 Route::prefix('mail-diagnostic')->group(function () {
     Route::get('/test', [MailDiagnosticController::class, 'diagnose']);
     Route::post('/send-test', [MailDiagnosticController::class, 'sendTestEmail']);
 });
 
-// Fallback route for unauthorized access
+
 Route::get('/unauthorized', [RedirectController::class, 'unauthorized'])->name('unauthorized');
